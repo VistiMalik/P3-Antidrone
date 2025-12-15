@@ -1,13 +1,15 @@
 import utils.motorUtils as motorUtils
 import utils.rfUtils as rfUtils
+from utils.config import *
 
 # Idle mode routine for the drone
 
 # Full scan pattern
-def idleMode():
+def setIdleMode():
     for i in range(90//18):
-        motorUtils.movVertical(18, 0.00075)
         for j in range(360//18):
             rfUtils.scan()
-            motorUtils.movHorizontal(18, 0.005)
-    motorUtils.movVertical(-90, 0.00075)
+            motorUtils.movHorizontal(18, speedIdle)
+        motorUtils.movVertical(-18, speedIdle)
+    rfUtils.scan()  # Final scan at the top position
+    motorUtils.movVertical(90, speedIdle)

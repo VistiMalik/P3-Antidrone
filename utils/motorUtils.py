@@ -1,15 +1,10 @@
 import RPi.GPIO as GPIO
 import time
+from utils.config import *
 
+# Pin defs imported from config.py:
 
-PULL_H = 4 
-PULL_V = 22
-DIR_H = 17
-DIR_V = 25
-
-
-
-
+# Setup GPIO pins
 def setup():
     GPIO.setmode(GPIO.BCM)  # Set mode to BCM
 
@@ -40,7 +35,7 @@ def movHorizontal(degrees, speed):
 
 # Move stepper motor 2 (Vertical)
 def movVertical(degrees, speed):
-    steps = abs(int(round(degrees/1.8, 0)))*3 # Convert degrees to steps (1 step = 1.8°) and remove sign and multiply by 3 due to gear ratio
+    steps = abs(int(round(degrees/1.8, 0)))*3*32 # Convert degrees to steps (1 step = 1.8°) and remove sign and multiply by 3 due to gear ratio
 
     # If move negative degrees turn on direction pin
     if degrees < 0: 

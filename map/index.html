@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+     <!-- Set title of website and choose charset encoding -->
+     <title>Map</title>
+    <meta charset="utf-8" />
+
+    <!-- Import CSS for map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        /* Remove all borders from all html element*/
+        body, html { 
+            margin: 0; 
+            padding: 0; 
+        }
+        /* Header styling */
+        #header {
+            /* Header background color and paddings */
+            background-color: black;
+            margin: 0px;
+            padding: 0px;
+            display: flex;
+            align-items: center;
+        }
+        #header h1 {
+            /* Header text styling */
+            /* Text styling */
+            color: white;
+            font-family: Arial, Helvetica, sans-serif;
+            padding-left: 5vh;
+        }
+        .header-text {
+            /* Header text styling */
+            /* Text styling */
+            color: grey;
+            font-family: Arial, Helvetica, sans-serif;
+            padding-left: 5vh;
+            flex-direction: column;
+        }
+        /* Styling for the map */
+        #map-container {
+            position: relative; /* Make arrow able to be on top */
+        }
+        #map {
+            height: 85vh; /* Fill the entire screen except header */
+            filter: brightness(300%); /* Increase brightness to make kinda grey */
+        }
+
+        /* Arrow styling */
+        .arrow {
+            display: flex;
+            align-items: center;
+            transform: rotate(var(--angle));
+        }
+        /* Line behind */
+        .arrow-shaft {
+            height: 3px;
+            background: white;
+        }
+        /* Triangle head */
+        .arrow-head {
+            width: 0;
+            height: 0;
+            border-left: 12px solid white;
+            border-top: 6px solid transparent;
+            border-bottom: 6px solid transparent;
+        }
+        
+        /* Arrow wrapper */
+        #horizontal-arrow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: rotate(var(--angle, 0deg));
+            transform-origin: left center; 
+        }
+        
+        /* Fix white lines when zooming (Remove tile borders) */
+        .leaflet-tile {
+        outline: 1px solid transparent;
+        }
+
+
+
+
+
+
+
+    </style>
+    
+</head>
+
+<body>
+    <!-- Create header -->
+    <div id="header" style="height: 15vh;">
+        <h1>DroneTurret</h1>
+        <!-- Debug data lat, long, pitch and tilt of antenna -->
+        <div class="header-text">
+            <p>Horizontal pitch: 10°</p>
+            <p>Vertical tilt: 10°</p>
+        </div>
+        <div class="header-text">
+            <p>Lat: 102.312123123</p>
+            <p>Long: 12.312342</p>
+        </div>
+        <!-- Arrow to show vertical tilt -->
+        <div class="arrow" id="vertical-arrow" style="margin-left: auto; margin-right: 10vh;">
+            <div class="arrow-shaft" style="width: 7.5vh;"></div>
+            <div class="arrow-head"></div>
+        </div>
+    </div>
+    <!-- Create map fill the entire screen except header -->
+    <div id="map-container">
+        <div id="map"></div>
+
+        <!-- Center arrow overlay -->
+        <div id="horizontal-arrow" class="arrow">
+            <div class="arrow-shaft" style="width:40vh;"></div>
+            <div class="arrow-head"></div>
+        </div>
+    </div>
+    <!-- Javascript for websocket communication-->
+    <script>
+        const socket = new WebSocket("ws://localhost:8082"); // <-- must match Python port
+
+        socket.addEventListener("open", () => {
+            console.log("WS connected");
+        });
+
+        socket.addEventListener("message", (event) => {
+            try {
+            const data = JSON.parse(event.data);
+
+            // Expecting: { horizontal_angle: 10, vertical_angle: 10, color: "red" }
+            if (typeof data.horizontal_angle === "number") setArrowAngle(h_arrow, data.horizontal_angle);
+            if (typeof data.vertical_angle === "number") setArrowAngle(v_arrow, data.vertical_angle);
+            if (typeof data.color === "string") setArrowColors(data.color);
+
+            // Optional: update header text too
+            const header = document.querySelector("#header .header-text");
+            // or select the exact <p> elements if you want
+            } catch (e) {
+            console.error("Bad WS message:", event.data);
+            }
+        });
+    </script>
+
+    <!-- Javascript for map -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // Set coordinates for map center
+        cord_lat = 55.64979777629641
+        cord_long = 12.541652207298261
+
+        // Create map object
+        var map = L.map('map', {attributionControl: false}).setView([cord_lat, cord_long], 16);
+
+        // Set map tiles to correct cords (Use dark_nolabels for no street names)
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png').addTo(map);
+    </script>
+
+
+    <!-- Javascript for arrows -->
+    <script>
+        // Define arrows
+        const v_arrow = document.querySelector('#vertical-arrow');
+        const h_arrow = document.querySelector('#horizontal-arrow');
+        const arrows = document.querySelectorAll('.arrow');
+
+        // Set arrow colors
+        function setArrowColors(color) {
+            arrows.forEach(arrow => {
+                arrow.querySelector('.arrow-shaft').style.background = color;
+                arrow.querySelector('.arrow-head').style.borderLeftColor = color;
+            });
+        }
+
+        // Set arrow angles
+        function setArrowAngle(arrow, angle) {
+            arrow.style.setProperty('--angle', `-${angle}deg`);
+        }
+
+        setArrowAngle(v_arrow, 90);
+        setArrowAngle(h_arrow, 90);
+
+        setArrowColors('lime')
+    </script>
+</body>
+</html>

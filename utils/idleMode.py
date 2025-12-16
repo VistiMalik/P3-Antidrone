@@ -6,11 +6,10 @@ from utils.config import *
 
 # Full scan pattern
 def setIdleMode():
-    motorUtils.movVertical(90, speedIdle)  # We start from the top position
+    rfUtils.scan()  # Initial scan at top position
     for i in range(90//18):
+        motorUtils.movVertical(18, speedIdle)
         for j in range(360//18):
             rfUtils.scan()
             motorUtils.movHorizontal(18, speedIdle)
-        motorUtils.movVertical(-18, speedIdle)
-    rfUtils.scan()  # Final scan at the top position
-    motorUtils.movVertical(90, speedIdle)
+    motorUtils.resetPosition()

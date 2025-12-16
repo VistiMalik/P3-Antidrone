@@ -7,13 +7,13 @@ from utils.config import *
 # OBS - Vertical movements are inverted due to gears
 def setSetupMode():
     for i in range(3):  # Repeat the entire scanning process 3 times to get baseline noise levels
+        rfUtils.scanBaseline()  # Initial scan at the top position
         for j in range(90//18):
+            motorUtils.movVertical(18, speedSetup) # Move down by 18 degrees
             for k in range(360//18):
                 rfUtils.scanBaseline()
-                motorUtils.movHorizontal(18, speedSetup)
-            motorUtils.movVertical(-18, speedSetup)
-        rfUtils.scanBaseline()  # Final scan at the top position
-        motorUtils.movVertical(90, speedIdle)  # Return to vert_min: position
-    motorUtils.resetPosition()
+                motorUtils.movHorizontal(18, speedSetup) # Move right by 18 degrees
+        
+        motorUtils.resetPosition() # Return to the top-position after each full scan
     idleMode.setIdleMode()  # Switch to idle mode after setup is complete
     

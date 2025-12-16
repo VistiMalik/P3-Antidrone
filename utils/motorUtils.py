@@ -6,7 +6,6 @@ from utils.config import *
 # Initial positions (defined in config.py):
 coords = {"horizontal": horz_start_pos, "vertical": vert_start_pos}  # Initial coordinates
 
-
 # Setup GPIO pins
 def setup():
     GPIO.setmode(GPIO.BCM)  # Set mode to BCM
@@ -73,5 +72,8 @@ def resetPosition():
     movVertical(-coords["vertical"] + vert_start_pos, speedIdle)
 
 
+def getCoords():
+    global coords
+    return coords
 
 setup()

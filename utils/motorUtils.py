@@ -2,6 +2,12 @@ import RPi.GPIO as GPIO
 import time
 from utils.config import *
 
+# Constants:
+STEP_ANGLE = 1.8
+MICROSTEPS = 32
+# Angle per microstep
+ANGLE_PER_MICROSTEP = STEP_ANGLE / MICROSTEPS
+
 # Pin defs imported from config.py
 # Initial positions (defined in config.py):
 coords = {"horizontal": horz_start_pos, "vertical": vert_start_pos}  # Initial coordinates
@@ -21,12 +27,18 @@ def setup():
 # Move stepper motor 1 (Horizontal)
 def movHorizontal(degrees, speed):
     global coords
-    steps = abs(int(round(degrees/1.8, 0))) # Convert degrees to steps (1 step = 1.8°) and remove sign
+
+    steps_moved = 0
+
+    raw_steps = degrees / ANGLE_PER_MICROSTEP
+    steps = abs(int(round(raw_steps, 0)))  # Convert degrees to steps (1 step = 1.8°) and remove sign
 
     # If move negative degrees turn on direction pin
     if degrees < 0: 
         direction = -1
         GPIO.output(DIR_H, GPIO.HIGH)
+    else:
+        direction = 1
 
     # Turn on and off pull pin step times, such it moves the steps
     for i in range(steps):
@@ -34,8 +46,11 @@ def movHorizontal(degrees, speed):
         time.sleep(speed)
         GPIO.output(PULL_H, GPIO.LOW)
         time.sleep(speed)
-        coords["horizontal"] += ((1.8/32)*direction)%360
+        steps_moved += 1
 
+    delta = steps_moved * ANGLE_PER_MICROSTEP * direction    
+    coords["horizontal"] += delta
+    coords["horizontal"] %= 360  
     direction = 1
     GPIO.output(DIR_H, GPIO.LOW) # Turn off/reset direction pin
 
@@ -48,12 +63,16 @@ def movVertical(degrees, speed):
         print("Vertical movement out of bounds")
         return
     else:
-        steps = abs(int(round(degrees/1.8, 0)))*3*32 # Convert degrees to steps (1 step = 1.8°) and remove sign and multiply by 3 due to gear ratio
+        steps_moved = 0
+        raw_steps = degrees / ANGLE_PER_MICROSTEP * GEAR_RATIO # Adjust for gear ratio
+        steps = abs(int(round(raw_steps, 0)))  # Convert degrees to steps (1 step = 1.8°) and remove sign
 
         # If move negative degrees turn on direction pin
         if degrees < 0: 
             direction = -1
             GPIO.output(DIR_V, GPIO.HIGH)
+        else:
+            direction = 1
 
         # Turn on and off pull pin step times, such it moves the steps
         for i in range(steps):
@@ -61,8 +80,11 @@ def movVertical(degrees, speed):
             time.sleep(speed)
             GPIO.output(PULL_V, GPIO.LOW)
             time.sleep(speed)
-            coords["vertical"] += ((1.8/32)*direction)%360
-
+            steps_moved += 1
+            
+            coords["vertical"] += 1.8/32/3*direction
+            coords["vertical"] %= 360  
+        
         direction = 1
         GPIO.output(DIR_V, GPIO.LOW) # Turn off/reset direction pin
 

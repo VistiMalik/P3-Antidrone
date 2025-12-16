@@ -4,19 +4,21 @@
 rssi_threshold = 10  # RSSI threshold for drone detection (test value)
 
 # Movement speed settings:
-speedSetup = 0.001  # Move speed during setup phase
-speedIdle = 0.0005  # Move speed during idle state
-speedSearch = 0.0001  # Move speed during search operations
+speedSetup = 0.00001  # Move speed during setup phase
+speedIdle = 0.000005  # Move speed during idle state
+speedSearch = 0.000001  # Move speed during search operations
 
 # Scan time:
 scanTime = 0.05  # Time duration for scanning in seconds (Halts movement during scan)
 
 # Coordinate settings:
-vert_start_pos = 90  # Starting vertical position in degrees
+vert_start_pos = 0  # Starting vertical position in degrees
 horz_start_pos = 0  # Starting horizontal position in degrees
 # Vertical movement limits:
 vert_min = 0  # Minimum vertical position in degrees
 vert_max = 90  # Maximum vertical position in degrees
+
+GEAR_RATIO = 3  # Gear ratio for vertical motor
 
 # GPIO pin assignments:
 PULL_H = 4

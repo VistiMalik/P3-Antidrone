@@ -53,7 +53,7 @@ def scan():
     was_search_mode = rfCompValues(scan_section)  # update RF values for every section
 
     if was_search_mode:
-        print("Recalibrating baseline values after search...")
+        print("Going to idle mode")
         baseline_sums = [0.0] * 101  # reset baseline sums
         idlemode.setIdleMode()  # Go back to idle mode af ended search mode
     else:

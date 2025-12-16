@@ -119,9 +119,36 @@
             <div class="arrow-head"></div>
         </div>
     </div>
+    <!-- Javascript for arrows -->
+    <script>
+        // Define arrows
+        const v_arrow = document.querySelector('#vertical-arrow');
+        const h_arrow = document.querySelector('#horizontal-arrow');
+        const arrows = document.querySelectorAll('.arrow');
+
+        // Set arrow colors
+        function setArrowColors(color) {
+            arrows.forEach(arrow => {
+                arrow.querySelector('.arrow-shaft').style.background = color;
+                arrow.querySelector('.arrow-head').style.borderLeftColor = color;
+            });
+        }
+
+        // Set arrow angles
+        function setArrowAngle(arrow, angle) {
+            arrow.style.setProperty('--angle', `-${angle}deg`);
+        }
+
+        setArrowAngle(v_arrow, 90);
+        setArrowAngle(h_arrow, 90);
+
+        setArrowColors('lime')
+    </script>
+
+
     <!-- Javascript for websocket communication-->
     <script>
-        const socket = new WebSocket("ws://localhost:8082"); // <-- must match Python port
+        const socket = new WebSocket("ws://172.20.10.2:8082"); // <-- must match Python port
 
         socket.addEventListener("open", () => {
             console.log("WS connected");
@@ -130,6 +157,7 @@
         socket.addEventListener("message", (event) => {
             try {
             const data = JSON.parse(event.data);
+            console.log("WS message:", data);
 
             // Expecting: { horizontal_angle: 10, vertical_angle: 10, color: "red" }
             if (typeof data.horizontal_angle === "number") setArrowAngle(h_arrow, data.horizontal_angle);
@@ -159,31 +187,5 @@
         L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png').addTo(map);
     </script>
 
-
-    <!-- Javascript for arrows -->
-    <script>
-        // Define arrows
-        const v_arrow = document.querySelector('#vertical-arrow');
-        const h_arrow = document.querySelector('#horizontal-arrow');
-        const arrows = document.querySelectorAll('.arrow');
-
-        // Set arrow colors
-        function setArrowColors(color) {
-            arrows.forEach(arrow => {
-                arrow.querySelector('.arrow-shaft').style.background = color;
-                arrow.querySelector('.arrow-head').style.borderLeftColor = color;
-            });
-        }
-
-        // Set arrow angles
-        function setArrowAngle(arrow, angle) {
-            arrow.style.setProperty('--angle', `-${angle}deg`);
-        }
-
-        setArrowAngle(v_arrow, 90);
-        setArrowAngle(h_arrow, 90);
-
-        setArrowColors('lime')
-    </script>
 </body>
 </html>

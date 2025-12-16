@@ -1,24 +1,51 @@
 import utils.setupMode as setupMode
 import utils.idleMode as idleMode
+import utils.motorUtils as motorUtils
 import website
 import threading
 import asyncio
 
+# Global event to control the turret loop safely
+stop_turret_event = threading.Event()
+
 def run_turret():
-    setupMode.setSetupMode()
-    while True:
-        idleMode.setIdleMode()
+    try:
+        setupMode.setSetupMode()
+        # Loop runs only while the turret event is NOT set
+        while not stop_turret_event.is_set():
+            idleMode.setIdleMode()
+    except Exception as e:
+        print(f"An error occurred in turret operation: {e}")
 
 async def main():
-    # Start turret
-    turret_thread = threading.Thread(target=run_turret)
-    turret_thread.start()
-    
-    flask_thread = threading.Thread(target=website.start_webpage, daemon=True)
-    flask_thread.start()
+    try:
+        # Start turret
+        turret_thread = threading.Thread(target=run_turret, daemon=True)
+        turret_thread.start()
+        
+        # Start website
+        flask_thread = threading.Thread(target=website.start_webpage, daemon=True)
+        flask_thread.start()
 
+        await website.start_socket()
 
-    await website.start_socket()
+    except KeyboardInterrupt:   # Handle Ctrl+C and other errors gracefully - puts turret back in home position
+       print("Program terminated by user.")
+    except Exception as e:
+       print(f"An unexpected error occurred: {e}")
+    finally:
+        print("Stopping turret operation.")
+        stop_turret_event.set()
+        if 'turret_thread' in locals() and turret_thread.is_alive():
+            turret_thread.join(timeout=2.0)
+
+        print("Resetting motor position to home and closing website.")
+        motorUtils.resetPosition()
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        # Catch any final interrupts during shutdown
+        pass
+

@@ -15,5 +15,4 @@ def setSetupMode():
                 motorUtils.movHorizontal(18, speedSetup) # Move right by 18 degrees
         
         motorUtils.resetPosition() # Return to the top-position after each full scan
-    idleMode.setIdleMode()  # Switch to idle mode after setup is complete
     

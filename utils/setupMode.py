@@ -6,7 +6,6 @@ from utils.config import *
 # Setup routine for the Antidrone system
 # OBS - Vertical movements are inverted due to gears
 def setSetupMode():
-    motorUtils.movVertical(90, speedIdle)  # We start from the top position
     for i in range(3):  # Repeat the entire scanning process 3 times to get baseline noise levels
         for j in range(90//18):
             for k in range(360//18):
@@ -14,6 +13,7 @@ def setSetupMode():
                 motorUtils.movHorizontal(18, speedSetup)
             motorUtils.movVertical(-18, speedSetup)
         rfUtils.scanBaseline()  # Final scan at the top position
-        motorUtils.movVertical(90, speedIdle)  # Reset vertical position
+        motorUtils.movVertical(90, speedIdle)  # Return to vert_min: position
+    motorUtils.resetPosition()
     idleMode.setIdleMode()  # Switch to idle mode after setup is complete
     

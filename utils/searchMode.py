@@ -19,4 +19,4 @@ def setSearchMode():
     print("No drone detected in the vicinity.")
     time.sleep(1)
     print("Going back to idle mode.")
-    motorUtils.movVertical(-90, speedSearch)
+    motorUtils.resetPosition()

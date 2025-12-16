@@ -11,6 +11,13 @@ speedSearch = 0.0001  # Move speed during search operations
 # Scan time:
 scanTime = 0.05  # Time duration for scanning in seconds (Halts movement during scan)
 
+# Coordinate settings:
+vert_start_pos = 90  # Starting vertical position in degrees
+horz_start_pos = 0  # Starting horizontal position in degrees
+# Vertical movement limits:
+vert_min = 0  # Minimum vertical position in degrees
+vert_max = 90  # Maximum vertical position in degrees
+
 # GPIO pin assignments:
 PULL_H = 4
 PULL_V = 22

@@ -55,7 +55,7 @@ def scan():
     if was_search_mode:
         print("Recalibrating baseline values after search...")
         baseline_sums = [0.0] * 101  # reset baseline sums
-        setupMode.setSetupMode()  # Recalibrate baseline values after search (temporary until gyto implemented)
+        idlemode.setIdleMode()  # Go back to idle mode af ended search mode
     else:
         scan_section += 1
         if scan_section > 100:

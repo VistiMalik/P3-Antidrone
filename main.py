@@ -10,14 +10,14 @@ import time
 stop_turret_event = threading.Event()
 
 def run_turret():
-    try:
-        print("entering setup")
-        modes.setupMode()
-        # Loop runs only while the turret event is NOT set
-        while not stop_turret_event.is_set():
-            modes.idleMode()
-    except Exception as e:
-        print(f"An error occurred in turret operation: {e}")
+    #try:
+    print("entering setup")
+    modes.setupMode()
+    # Loop runs only while the turret event is NOT set
+    while not stop_turret_event.is_set():
+        modes.idleMode()
+    #except Exception as e:
+    #    print(f"An error occurred in turret operation: {e}")
 
 async def main():
     try:

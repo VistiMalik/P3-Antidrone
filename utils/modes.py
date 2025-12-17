@@ -22,8 +22,9 @@ def getCurrentMode():
 def setupMode():
     global CURRENT_MODE
     CURRENT_MODE = 0
-
+    print("In here")
     for i in range(setup_sweep_count):  # Repeat the entire scanning process 3 times to get baseline noise levels
+        print("HII")
         rfUtils.scanBaseline()  # Initial scan at the top position
         for row in range(90//9):
             motorUtils.movVertical(9, speedSetup) # Move down by 9 degrees

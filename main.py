@@ -11,6 +11,7 @@ stop_turret_event = threading.Event()
 
 def run_turret():
     try:
+        print("entering setup")
         modes.setupMode()
         # Loop runs only while the turret event is NOT set
         while not stop_turret_event.is_set():

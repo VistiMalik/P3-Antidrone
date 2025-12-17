@@ -1,6 +1,6 @@
 import time
-import utils.searchMode as searchMode
-import utils.setupMode as setupMode
+import utils.modes as modes
+
 from utils.config import *
 
 # Global variable to keep track of the current scan section
@@ -55,7 +55,7 @@ def scan():
     if was_search_mode:
         print("Going to idle mode")
         baseline_sums = [0.0] * 101  # reset baseline sums
-        idlemode.setIdleMode()  # Go back to idle mode af ended search mode
+        modes.setIdleMode()  # Go back to idle mode af ended search mode
     else:
         scan_section += 1
         if scan_section > 100:
@@ -80,7 +80,7 @@ def rfCompValues(section):
     test_value = 53  # Placeholder for actual RF value
     comp_value = test_value - baseline_avgs[section]
     if comp_value > rssi_threshold:
-        searchMode.setSearchMode()
+        modes.setSearchMode()
         return True
     else:
         return False  # Example comparison

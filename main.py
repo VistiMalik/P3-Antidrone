@@ -1,5 +1,4 @@
-import utils.setupMode as setupMode
-import utils.idleMode as idleMode
+import utils.modes as modes
 import utils.motorUtils as motorUtils
 import website
 import threading
@@ -10,10 +9,10 @@ stop_turret_event = threading.Event()
 
 def run_turret():
     try:
-        setupMode.setSetupMode()
+        modes.setSetupMode()
         # Loop runs only while the turret event is NOT set
         while not stop_turret_event.is_set():
-            idleMode.setIdleMode()
+            modes.setIdleMode()
     except Exception as e:
         print(f"An error occurred in turret operation: {e}")
 

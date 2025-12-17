@@ -23,8 +23,9 @@ def setupHackRF():
     devices = SoapySDR.Device.enumerate()
     sdr = SoapySDR.Device(devices[0])  # Assuming the first device is the HackRF
     sdr.setSampleRate(SoapySDR.SOAPY_SDR_RX, 0, 10e6)
-    sdr.setFrequency(SoapySDR.SOAPY_SDR_RX, 0, channels)
+    sdr.setFrequency(SoapySDR.SOAPY_SDR_RX, 0, 100e6)
     sdr.setGain(SoapySDR.SOAPY_SDR_RX, 0, 20)
+    # Setup stream
     rxStream = sdr.setupStream(SoapySDR.SOAPY_SDR_RX, SoapySDR.SOAPY_SDR_CF32)
     sdr.activateStream(rxStream)
 

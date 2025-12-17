@@ -20,11 +20,10 @@ def readRssi():
     result = subprocess.run(
     ["python3", "hackRFInteraction.py"],
     capture_output=True,
-    text=True
-)
+    text=True)
 
-    rssi = float(result.stdout)
-    return rssi
+    print(result.stdout)
+    return 0
 
 
 def getMaxRssi():

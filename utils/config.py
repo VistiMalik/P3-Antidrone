@@ -34,4 +34,4 @@ longitude = 0.0  # Placeholder for longitude
 
 setup_sweep_count = 3  # Number of setup sweeps to establish baseline
 
-channels = [2445, 2435, 2461]  # Frequencies in MHz to scan for drones
+channels = [2445]  # Frequencies in MHz to scan for drones

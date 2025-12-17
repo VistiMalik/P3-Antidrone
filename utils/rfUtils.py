@@ -13,7 +13,7 @@ import threading
 baseline_avgs = {}   # Baseline averages for the 101 sections
 sdr = None  # Global SDR object
 rxStream = None  # Global RX stream object
-max_rssi = None
+rssi = None
 sdr_lock = threading.Lock()
 
 
@@ -22,46 +22,31 @@ def setupHackRF():
     global rxStream
     devices = SoapySDR.Device.enumerate()
     sdr = SoapySDR.Device(devices[0])  # Assuming the first device is the HackRF
-    sdr.setSampleRate(SoapySDR.SOAPY_SDR_RX, 0, 20e6)
-    sdr.setGain(SoapySDR.SOAPY_SDR_RX, 0, 30)
-
+    sdr.setSampleRate(SoapySDR.SOAPY_SDR_RX, 0, 10e6)
+    sdr.setFrequency(SoapySDR.SOAPY_SDR_RX, 0, 100e6)
+    sdr.setGain(SoapySDR.SOAPY_SDR_RX, 0, 20)
     rxStream = sdr.setupStream(SoapySDR.SOAPY_SDR_RX, SoapySDR.SOAPY_SDR_CF32)
     sdr.activateStream(rxStream)
 
 
 
 def readRssi():
-    global sdr, rxStream, max_rssi
-    buff = np.empty(4096, np.complex64)
-    result = []
-
-    with sdr_lock:
-        for freq in channels:
-            sdr.setFrequency(SoapySDR.SOAPY_SDR_RX, 0, freq * 1e6)
-            time.sleep(0.05)
-
-            # flush a couple reads
-            for _ in range(2):
-                sr = sdr.readStream(rxStream, [buff], len(buff))
-                if sr.ret < 0:
-                    # error codes: just skip this freq for now
-                    continue
-
-            sr = sdr.readStream(rxStream, [buff], len(buff))
-            if sr.ret > 0:
-                x = buff[:sr.ret]
-                power = np.mean((x.real * x.real) + (x.imag * x.imag))
-                rssi = 10.0 * math.log10(power + 1e-12)
-                result.append(rssi)
-
-    if result:
-        max_rssi = max(result)
-    return result
+    global sdr, rxStream, rssi
+    for i in range(100,150):
+        # Read samples
+        buff = np.empty(4096, np.complex64)
+        sr = sdr.readStream(rxStream, [buff], len(buff))
+        
+        if sr.ret > 0:
+            power = np.mean(np.abs(buff)**2)
+            rssi = 10 * math.log10(power)
+    
+    return rssi
 
 
 def getMaxRssi():
-    global max_rssi
-    return max_rssi
+    global rssi
+    return rssi
     
 
 # Function to scan for every section and iterate through sections

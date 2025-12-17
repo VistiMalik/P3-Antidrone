@@ -205,7 +205,7 @@
             if (typeof data.vertical_angle === "number") setArrowAngle(v_arrow, data.vertical_angle); updateDebugVertical(data.vertical_angle);
             if (typeof data.color === "string") setArrowColors(data.color);
             if (typeof data.mode === "string") setModeText(data.mode);
-            if (typeof data.rssi === "number") updateLocation(data.rssi);
+            if (typeof data.rssi === "number") updateDebugRssi(data.rssi);
             if (typeof data.latlong === "list") updateLocation(data.latlong);
             
             // Optional: update header text too

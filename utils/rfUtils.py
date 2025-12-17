@@ -30,7 +30,7 @@ def readRssi():
     global sdr
     global rxStream
     global max_rssi
-    buff = np.empty(4096, np.int16)
+    buff = np.empty(4096*2, np.int16)
     result = []
     while len(result) <= 0:
         for freq in channels:

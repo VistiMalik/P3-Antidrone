@@ -12,7 +12,8 @@ h_angle = 10
 v_angle = 10
 mode = "SETUP"
 color = "red"
-
+latitude = 0
+longitude = 0
 clients = set()
 
 

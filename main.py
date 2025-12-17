@@ -13,8 +13,7 @@ def run_turret():
     rfUtils.setupHackRF()
 
     while True:
-        rfUtils.readRssi()
-        print(rfUtils.getMaxRssi())
+        rfUtils.readRssi() 
         time.sleep(1)
     try:
         modes.setupMode()

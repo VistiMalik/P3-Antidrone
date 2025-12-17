@@ -10,8 +10,6 @@ import time
 stop_turret_event = threading.Event()
 
 def run_turret():
-    rfUtils.setupHackRF()
-
     while True:
         rfUtils.readRssi() 
         time.sleep(1)

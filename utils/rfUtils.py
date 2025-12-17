@@ -27,28 +27,28 @@ def setupHackRF():
     sdr.activateStream(rxStream)
 
 def readRssi():
-    global sdr
-    global rxStream
-    global max_rssi
-    buff = np.empty(4096*2, np.int16)
+    global sdr, rxStream, max_rssi
+
+    N = 4096
+    buff = np.empty(N * 2, np.int16)
     result = []
-    while len(result) <= 0:
-        for freq in channels:
-            sdr.setFrequency(SoapySDR.SOAPY_SDR_RX, 0, freq * 1e6)
-            time.sleep(0.1)  # allow tuner to settle
-            
-            sr = sdr.readStream(rxStream, [buff], 4096*2, timeoutUs=int(200000))
 
-            if sr.ret > 0:
-                iq = buff[: sr.ret * 2].astype(np.float32)
-                i = iq[0::2]
-                q = iq[1::2]
-                power = np.mean((i*i + q*q) / (32768.0 * 32768.0))
-                rssi = 10.0 * math.log10(power)
-                result.append(rssi)
-        time.sleep(0.1)
+    for freq in channels:
+        sdr.setFrequency(SoapySDR.SOAPY_SDR_RX, 0, freq * 1e6)
+        time.sleep(0.05)
 
-    max_rssi = max(result)
+        sr = sdr.readStream(rxStream, [buff], N, timeoutUs=200000)
+        if sr.ret > 0:
+            iq = buff[:sr.ret * 2].astype(np.float32)
+
+            i = iq[0::2]
+            q = iq[1::2]
+
+            power = np.mean((i*i + q*q) / (32768.0 * 32768.0))
+            if power > 0:
+                result.append(10.0 * math.log10(power))
+
+    max_rssi = max(result) if result else None
     return result
 
 def getMaxRssi():

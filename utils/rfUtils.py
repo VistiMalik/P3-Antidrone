@@ -22,7 +22,7 @@ def readRssi():
         for i in range(50): # Try up to 50 times, such we can get errors and still continue with correct values
             # Spawn new python process to read RSSI with frequencies as arguments
             result = subprocess.run(
-            ["python3", "utils/hackRFInteraction.py", f"{channel[0]}"],
+            ["python3", "utils/hackRFInteraction.py", f"{channels[0]}"],
             capture_output=True,
             text=True)
 

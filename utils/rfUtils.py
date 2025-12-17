@@ -11,11 +11,13 @@ import utils.motorUtils as motorUtils
 # Global variable to keep track of the current scan section
 baseline_avgs = {}   # Baseline averages for the 101 sections
 sdr = None  # Global SDR object
+rxStream = None  # Global RX stream object
 max_rssi = None
 
 
 def setupHackRF():
     global sdr
+    global rxStream
     devices = SoapySDR.Device.enumerate()
     sdr = SoapySDR.Device(devices[0])  # Assuming the first device is the HackRF
     sdr.setSampleRate(SoapySDR.SOAPY_SDR_RX, 0, 20e6)
@@ -29,6 +31,7 @@ def setupHackRF():
 
 def readRssi():
     global sdr
+    global rxStream
     global max_rssi
     buff = np.empty(4096, np.complex64)
     result = []
@@ -36,7 +39,7 @@ def readRssi():
         sdr.setFrequency(SoapySDR.SOAPY_SDR_RX, 0, freq * 1e6)
         time.sleep(0.05)  # allow tuner to settle
         
-        sr = sdr.readStream(rxStream, [buff], len(buff))
+        sr = sdr.readStream(SoapySDR.rxStream, [buff], len(buff))
         if sr.ret > 0:
             power = np.mean(np.abs(buff)**2)
             rssi = 10 * math.log10(power)

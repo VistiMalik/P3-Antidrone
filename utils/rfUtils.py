@@ -49,8 +49,9 @@ def scan():
     global baseline_sums
     print("Scanning section:", scan_section)
     time.sleep(scanTime)  # Delay for scanning
+    # rf_value = getRFValue()  # Example call to get RF value
 
-    was_search_mode = rfCompValues(scan_section)  # update RF values for every section
+    was_search_mode = rfCompValues(scan_section)#,rf_value)  # update RF values for every section
 
     if was_search_mode:
         print("Going to idle mode")
@@ -70,19 +71,27 @@ def scan():
     
     return scan_section
 
-def rfCompValues(section):
+def getRssiAndThreshold(section):#,rf_value):
     global rssi_threshold
     # Placeholder function to simulate updating RF values for a given section
     print(f"Updating RF values for section {section}")
 
-    # getRFValue(value)  # Example call to get RF value
-
-    test_value = 53  # Placeholder for actual RF value
-    comp_value = test_value - baseline_avgs[section]
-    if comp_value > rssi_threshold:
+    test_rf_value = 53  # Placeholder for actual RF value
+    comp_value = test_rf_value - baseline_avgs[section]
+    return comp_value
+    
+    
+def rfCompValues(section): 
+    comp_value = getRssiAndThreshold(section)
+    if comp_value > rssi_threshold: 
+        print("Drone detected! Entering search mode.") 
         modes.setSearchMode()
         return True
     else:
         return False  # Example comparison
+    
+def rfHillClimb():
+    # Placeholder function to simulate hill climbing algorithm
+    print("Performing hill climbing to refine drone location...")
     
     # Actual implementation would go here

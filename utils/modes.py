@@ -5,6 +5,12 @@ from utils.config import *
 
 CURRENT_MODE = "STARTING..."  # Global variable to track current mode
 
+OBJ_SPOTTED_COORDS = {"horizontal": -1, "vertical": -1}  # Global variable to track spotted object coordinates
+OBJ_SPOTTED_INIT_COORDS = {"horizontal": -1, "vertical": -1}  # Global variable to track initial spotted object coordinates
+OBJ_SPOTTED = False  # Flag to indicate if an object has been spotted
+OBJ_SPOTTED_TIME = 0  # Timestamp of when the object was spotted
+OBJ_NO_LONGER_SPOTTED_TIME = 0  # Timestamp of when the object was no longer spotted
+
 # Setup routine for the Antidrone system
 # OBS - Vertical movements are inverted due to gears
 def setSetupMode():
@@ -43,21 +49,41 @@ def setIdleMode():
 #  Search Mode for the antidrone system
 def setSearchMode():
     global CURRENT_MODE
+    global OBJ_SPOTTED_COORDS
+    global OBJ_SPOTTED_INIT_COORDS
+    global OBJ_SPOTTED_TIME
+    global OBJ_NO_LONGER_SPOTTED_TIME
     CURRENT_MODE = 2
 
-    # IMPLEMENT SEARCH ALGORITHM HERE #
+    OBJ_SPOTTED = True
+    OBJ_SPOTTED_INIT_COORDS = motorUtils.getCoords()
+    OBJ_SPOTTED_COORDS = motorUtils.getCoords()
+    OBJ_SPOTTED_TIME = time.time() # Timestamp of when the object was spotted (Maybe use to stop algo)
 
-    print("Setting Search Mode...")
-    time.sleep(1)
-    print("Search Mode activated.")
-    for i in range(90//18):
-        motorUtils.movVertical(18, speedSearch)
-        for j in range(360//18):
-            # rfUtils.scan()   # Search algorithm to be implemented
-            motorUtils.movHorizontal(18, speedSearch)
-    time.sleep(0.05) # Stabilization time for vertical direction switch
-    time.sleep(1)
-    print("No drone detected in the vicinity.")
+    # IMPLEMENT SEARCH ALGORITHM HERE #
+    while time.time() - OBJ_SPOTTED_TIME < 10:  # Search mode runs for 10 seconds after spotting an object
+        if evalNeighborCoords():    # If a better coordinate is found,
+            moveToNext()            # Move to the next coordinate
+        else:
+            print("local maximum found!")
+        rfUtils.scan()  # Scan at current position
+
+    # Test movements in search mode
+    # print("Setting Search Mode...")
+    # time.sleep(1)
+    # print("Search Mode activated.")
+    # for i in range(90//18):
+    #     motorUtils.movVertical(18, speedSearch)
+    #     for j in range(360//18):
+    #         # rfUtils.scan()   # Search algorithm to be implemented
+    #         motorUtils.movHorizontal(18, speedSearch)
+    # time.sleep(0.05) # Stabilization time for vertical direction switch
+    # time.sleep(1)
+    # print("No drone detected in the vicinity.")
+
+    OBJ_SPOTTED = False
+    OBJ_NO_LONGER_SPOTTED_TIME = time.time()
+
     time.sleep(1)
     print("Going back to idle mode.")
     motorUtils.resetPosition()
@@ -66,3 +92,16 @@ def setSearchMode():
 def getCurrentMode():
     global CURRENT_MODE
     return CURRENT_MODE
+
+def evalNeighborCoords():
+    should_move = False
+    # Placeholder function to evaluate neighboring coordinates
+    print("Evaluating neighboring coordinates for better drone signal...")
+    # Actual implementation would go here
+
+    return should_move
+
+def moveToNext():
+    # Placeholder function to move to the next coordinate
+    print("Moving to the next coordinate...")
+    # Actual implementation would go here

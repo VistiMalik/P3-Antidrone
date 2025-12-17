@@ -1,6 +1,7 @@
 import SoapySDR
 import numpy as np
 import math
+import sys 
 
 def readRssi():    
     global sdr, rxStream, rssi
@@ -26,13 +27,13 @@ def readRssi():
     return rssi_dbfs
 
 
-def setupHackRF():
+def setupHackRF(freq):
     global sdr
     global rxStream
     devices = SoapySDR.Device.enumerate()
     sdr = SoapySDR.Device(devices[0])  # Assuming the first device is the HackRF
     sdr.setSampleRate(SoapySDR.SOAPY_SDR_RX, 0, 10e6)
-    sdr.setFrequency(SoapySDR.SOAPY_SDR_RX, 0, 2445*1e6)
+    sdr.setFrequency(SoapySDR.SOAPY_SDR_RX, 0, freq*1e6)
     sdr.setGain(SoapySDR.SOAPY_SDR_RX, 0, 20)
     # Setup stream
     rxStream = sdr.setupStream(SoapySDR.SOAPY_SDR_RX, SoapySDR.SOAPY_SDR_CF32)
@@ -50,7 +51,8 @@ def closeHackRF():
     sdr = None
 
 def main():
-    setupHackRF()
+    freq = int(sys.argv[1])
+    setupHackRF(freq)
     rssi = readRssi()
     print(rssi)
     closeHackRF()

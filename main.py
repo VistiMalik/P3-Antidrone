@@ -10,9 +10,6 @@ import time
 stop_turret_event = threading.Event()
 
 def run_turret():
-    while True:
-        print(rfUtils.readRssi()) 
-        time.sleep(0.2)
     try:
         modes.setupMode()
         # Loop runs only while the turret event is NOT set

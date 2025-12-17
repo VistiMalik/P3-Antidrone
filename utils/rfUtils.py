@@ -28,11 +28,12 @@ def readRssi():
         # Try to convert output to float and return if it doesnt work wait and try to get result again
         try:
             rssi = float(result.stdout.strip())
-            continue
+            print("Hiii")
+            return rssi
         except Exception as e:
             print(e)
             time.sleep(0.2)
-    return rssi
+    
 
 # Function to scan for every section and iterate through sections
 def scanBaseline():

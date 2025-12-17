@@ -110,13 +110,13 @@
         </div>
 
         <!-- Debug data lat, long, pitch and tilt of antenna -->
-        <div class="header-text">
-            <p>Horizontal pitch: 10°</p>
-            <p>Vertical tilt: 10°</p>
+        <div class="header-text" style="width: 25vh;">
+            <p id="h_debug">Horizontal pitch: NaN°</p>
+            <p id="v_debug">Vertical tilt: NaN°</p>
         </div>
         <div class="header-text">
-            <p>Lat: 102.312123123</p>
-            <p>Long: 12.312342</p>
+            <p id="lat-debug">Lat: NaN</p>
+            <p id="long-debug">Lon: NaN</p>
         </div>
         <!-- Arrow to show vertical tilt -->
         <div class="arrow" id="vertical-arrow" style="margin-left: auto; margin-right: 10vh;">
@@ -141,6 +141,10 @@
         const h_arrow = document.querySelector('#horizontal-arrow');
         const arrows = document.querySelectorAll('.arrow');
         const mode_text = document.querySelector('.mode-text');
+        const v_debug = document.querySelector('#v_debug');
+        const h_debug = document.querySelector('#h_debug');
+        const lat_debug = document.querySelector('#lat-debug');
+        const long_debug = document.querySelector('#long-debug');
         
         // Set arrow colors
         function setArrowColors(color) {
@@ -162,11 +166,18 @@
             mode_text.textContent = mode;
         }
 
-        setArrowAngle(v_arrow, 90);
-        setArrowAngle(h_arrow, 90);
+        function updateDebugHorizontal(h_angle) {
+            h_debug.textContent = `Horizontal pitch: ${h_angle}°`;
+        }
 
-        setArrowColors('lime')
-        setModeText('Jamming');
+        function updateDebugVertical(v_angle) {
+            v_debug.textContent = `Vertical tilt: ${v_angle}°`;
+        }
+
+        function updateLocation(latlong) {
+            lat_debug.textContent = `Lat: ${latlong[0].toFixed(6)}`;
+            long_debug.textContent = `Lon: ${latlong[1].toFixed(6)}`;
+        }
     </script>
     <!-- Javascript for websocket communication-->
     <script>
@@ -182,11 +193,11 @@
             console.log("WS message:", data);
 
             // Expecting: { horizontal_angle: 10, vertical_angle: 10, color: "red" }
-            if (typeof data.horizontal_angle === "number") setArrowAngle(h_arrow, data.horizontal_angle);
-            if (typeof data.vertical_angle === "number") setArrowAngle(v_arrow, data.vertical_angle);
+            if (typeof data.horizontal_angle === "number") setArrowAngle(h_arrow, data.horizontal_angle); updateDebugHorizontal(data.horizontal_angle);
+            if (typeof data.vertical_angle === "number") setArrowAngle(v_arrow, data.vertical_angle); updateDebugVertical(data.vertical_angle);
             if (typeof data.color === "string") setArrowColors(data.color);
             if (typeof data.mode === "string") setModeText(data.mode);
-
+            if (typeof data.latlong === "list") updateLocation(data.latlong);
             // Optional: update header text too
             const header = document.querySelector("#header .header-text");
             // or select the exact <p> elements if you want

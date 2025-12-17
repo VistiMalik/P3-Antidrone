@@ -16,13 +16,14 @@ clients = set()
 
 
 async def broadcast():
-    global h_angle, v_angle, mode, color
+    global h_angle, v_angle, mode, color, latitude, longitude
 
     msg = json.dumps({
-        "horizontal_angle": h_angle,
-        "vertical_angle": (-90 + v_angle % 360),
+        "horizontal_angle": round(h_angle, 1),
+        "vertical_angle": round(-90 + v_angle % 360, 1),
         "mode": mode,
         "color": color,
+        "latlong": [latitude, longitude]
     })
     for ws in list(clients):
          await ws.send(msg)

@@ -28,3 +28,6 @@ PULL_H = 4
 PULL_V = 22
 DIR_H = 17
 DIR_V = 25
+
+latitude = 0.0  # Placeholder for latitude
+longitude = 0.0  # Placeholder for longitude

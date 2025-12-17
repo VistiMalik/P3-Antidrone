@@ -26,8 +26,11 @@ def setupMode():
     for i in range(setup_sweep_count):  # Repeat the entire scanning process 3 times to get baseline noise levels
         print("HII")
         rfUtils.scanBaseline()  # Initial scan at the top position
+        print("Here something")
         for row in range(90//9):
+            print(123)
             motorUtils.movVertical(9, speedSetup) # Move down by 9 degrees
+            print(321)
             for col in range(360//9):
                 rfUtils.scanBaseline()
                 motorUtils.movHorizontal(9, speedSetup) # Move right by 9 degrees

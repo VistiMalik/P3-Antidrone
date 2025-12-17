@@ -26,9 +26,6 @@ def setupHackRF():
     rxStream = sdr.setupStream(SoapySDR.SOAPY_SDR_RX, SoapySDR.SOAPY_SDR_CF32)
     sdr.activateStream(rxStream)
 
-
-
-
 def readRssi():
     global sdr
     global rxStream

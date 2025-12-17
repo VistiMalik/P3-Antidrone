@@ -28,7 +28,6 @@ def readRssi():
         # Try to convert output to float and return if it doesnt work wait and try to get result again
         try:
             rssi = float(result.stdout.strip())
-            print("Hiii")
             return rssi
         except Exception as e:
             print(e)

@@ -34,7 +34,7 @@ def readRssi():
     global max_rssi
     buff = np.empty(4096, np.complex64)
     result = []
-    while len(result) < 0:
+    while len(result) <= 0:
         result = []
         for freq in channels:
             sdr.setFrequency(SoapySDR.SOAPY_SDR_RX, 0, freq * 1e6)

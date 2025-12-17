@@ -4,6 +4,7 @@ import websockets
 import utils.motorUtils as motorUtils
 import time
 import flask
+from utils.config import *
 
 h_angle = 10
 v_angle = 10
@@ -17,7 +18,7 @@ async def broadcast():
 
     msg = json.dumps({
         "horizontal_angle": h_angle,
-        "vertical_angle": v_angle,
+        "vertical_angle": (-90 + v_angle % 360),
         "color": color
     })
     for ws in list(clients):
@@ -44,11 +45,11 @@ async def console_loop():
         color = "orange"
 
         await broadcast()
-        await asyncio.sleep(0.2)
+        await asyncio.sleep(0.05)
 
 async def start_socket():
-    async with websockets.serve(handler, "172.20.10.2", 8082):
-        print("WebSocket running on ws://172.20.10.2:8082")
+    async with websockets.serve(handler, IP, 8082):
+        print(f"WebSocket running on ws://{IP}:8082")
         await console_loop()
 
 
@@ -57,6 +58,6 @@ def start_webpage():
 
     @app.route('/map')
     def map():
-        return flask.send_from_directory('map', 'index.html')
+        return flask.render_template('map/index.html', ip=IP)
 
-    app.run(host='172.20.10.2', port=8081)
+    app.run(host=IP, port=8081)

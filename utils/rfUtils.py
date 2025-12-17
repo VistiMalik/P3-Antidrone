@@ -11,7 +11,7 @@ import subprocess
 
 # Global variable to keep track of the current scan section
 baseline_avgs = {}   # Baseline averages for the 101 sections
-rssi = None  # Global variable to store the latest RSSI value
+rssi = -1000  # Global variable to store the latest RSSI value
 
 
 

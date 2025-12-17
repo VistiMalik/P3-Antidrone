@@ -27,8 +27,9 @@ async def broadcast():
         "mode": mode,
         "color": color,
         "rssi": round(rssi, 2) ,
-        "latlong": [latitude, longitude]
-    })
+        "lat": latitude,
+        "lon": longitude
+        })
     for ws in list(clients):
          await ws.send(msg)
 

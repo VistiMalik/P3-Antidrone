@@ -179,12 +179,15 @@
         }
 
         function updateDebugRssi(rssi) {
-            rssi_debug.textContent = `RSSI: ${rssi}°`;
+            rssi_debug.textContent = `RSSI: ${rssi}`;
         }
 
-        function updateLocation(latlong) {
-            lat_debug.textContent = `Lat: ${latlong[0].toFixed(6)}`;
-            long_debug.textContent = `Lon: ${latlong[1].toFixed(6)}`;
+        function updateLat(lat) {
+            lat_debug.textContent = `Lat: ${lat.toFixed(6)}`;
+        }
+
+        function updateLon(lon) {
+            long_debug.textContent = `Lon: ${lon.toFixed(6)}`;
         }
     </script>
     <!-- Javascript for websocket communication-->
@@ -206,7 +209,8 @@
             if (typeof data.color === "string") setArrowColors(data.color);
             if (typeof data.mode === "string") setModeText(data.mode);
             if (typeof data.rssi === "number") updateDebugRssi(data.rssi);
-            if (typeof data.latlong === "list") updateLocation(data.latlong);
+            if (typeof data.lat === "number") updateLat(data.lat);
+            if (typeof data.lon === "number") updateLon(data.lon);
             
             // Optional: update header text too
             const header = document.querySelector("#header .header-text");

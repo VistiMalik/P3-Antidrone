@@ -17,13 +17,18 @@ rssi = None  # Global variable to store the latest RSSI value
 
 def readRssi():
     global rssi
-    result = subprocess.run(
-    ["python3", "utils/hackRFInteraction.py"],
-    capture_output=True,
-    text=True)
+    for i in range(50):
+        result = subprocess.run(
+        ["python3", "utils/hackRFInteraction.py"],
+        capture_output=True,
+        text=True)
 
-    rssi = float(result.stdout.strip())
-    return rssi
+        try:
+            rssi = float(result.stdout.strip())
+            return rssi
+        except:
+            pass
+
 
 
 def getMaxRssi():

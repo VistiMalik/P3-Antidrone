@@ -39,8 +39,8 @@ def readRssi():
         for freq in channels:
             sdr.setFrequency(SoapySDR.SOAPY_SDR_RX, 0, freq * 1e6)
             time.sleep(0.05)  # allow tuner to settle
-            
-            sr = sdr.readStream(SoapySDR.rxStream, [buff], len(buff))
+                       
+            sr = sdr.readStream(rxStream, [buff], len(buff))
             if sr.ret > 0:
                 power = np.mean(np.abs(buff)**2)
                 rssi = 10 * math.log10(power)

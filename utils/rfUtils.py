@@ -29,26 +29,42 @@ def setupHackRF():
 
 
 def readRssi():
-    global sdr
-    global rxStream
-    global max_rssi
+    global sdr, rxStream, max_rssi
     buff = np.empty(4096, np.complex64)
     result = []
-    while len(result) <= 0:
+
+    # Keep trying until we get at least one valid measurement per channel
+    while not result:
         result = []
         for freq in channels:
             sdr.setFrequency(SoapySDR.SOAPY_SDR_RX, 0, freq * 1e6)
-            time.sleep(0.05)  # allow tuner to settle
-                       
+
+            # Let tuner settle a bit
+            time.sleep(0.05)
+
+            # Flush a couple buffers after retune
+            for _ in range(2):
+                sr = sdr.readStream(rxStream, [buff], len(buff))
+                if sr.ret <= 0:
+                    continue
+
+            # Now take one "real" read
             sr = sdr.readStream(rxStream, [buff], len(buff))
             if sr.ret > 0:
-                power = np.mean(np.abs(buff)**2)
-                rssi = 10 * math.log10(power)
+                x = buff[:sr.ret]
+
+                # Power estimate (mean-square magnitude)
+                power = np.mean((x.real * x.real) + (x.imag * x.imag))
+
+                # Avoid log(0)
+                rssi = 10.0 * math.log10(power + 1e-12)
                 result.append(rssi)
+
         time.sleep(0.2)
 
     max_rssi = max(result)
     return result
+
 
 def getMaxRssi():
     global max_rssi

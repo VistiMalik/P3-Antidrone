@@ -9,7 +9,7 @@ CURRENT_MODE = "STARTING..."  # Global variable to track current mode
 # OBS - Vertical movements are inverted due to gears
 def setSetupMode():
     global CURRENT_MODE
-    CURRENT_MODE = "SETUPMODE"
+    CURRENT_MODE = 0
 
     for i in range(3):  # Repeat the entire scanning process 3 times to get baseline noise levels
         rfUtils.scanBaseline()  # Initial scan at the top position
@@ -28,7 +28,7 @@ def setSetupMode():
 # Full scan pattern
 def setIdleMode():
     global CURRENT_MODE
-    CURRENT_MODE = "IDLEMODE"
+    CURRENT_MODE = 1
 
     rfUtils.scan()  # Initial scan at top position
     for i in range(90//18):
@@ -43,7 +43,7 @@ def setIdleMode():
 #  Search Mode for the antidrone system
 def setSearchMode():
     global CURRENT_MODE
-    CURRENT_MODE = "SEARCHMODE"
+    CURRENT_MODE = 2
 
     # IMPLEMENT SEARCH ALGORITHM HERE #
 
@@ -61,3 +61,7 @@ def setSearchMode():
     time.sleep(1)
     print("Going back to idle mode.")
     motorUtils.resetPosition()
+
+def getCurrentMode():
+    global CURRENT_MODE
+    return CURRENT_MODE

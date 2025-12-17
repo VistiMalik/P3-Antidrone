@@ -39,6 +39,7 @@ async def console_loop():
 
     while True:
         coords = motorUtils.getCoords()
+        
         print(coords)
         h_angle = coords["horizontal"]
         v_angle = coords["vertical"]

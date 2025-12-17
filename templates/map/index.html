@@ -22,12 +22,13 @@
             display: flex;
             align-items: center;
         }
-        #header h1 {
+        #header h1{
             /* Header text styling */
             /* Text styling */
             color: white;
             font-family: Arial, Helvetica, sans-serif;
             padding-left: 5vh;
+            margin-bottom: 0vh;
         }
         .header-text {
             /* Header text styling */
@@ -36,6 +37,16 @@
             font-family: Arial, Helvetica, sans-serif;
             padding-left: 5vh;
             flex-direction: column;
+        }
+        .mode-text {
+            /* Mode text styling */
+            /* Text styling */
+            color: lime;
+            font-family: Arial, Helvetica, sans-serif;
+            padding-left: 5vh;
+            padding: 0vh, 5vh, 0vh, 0vh;
+            margin: 0vh;
+            text-align: center;
         }
         /* Styling for the map */
         #map-container {
@@ -93,7 +104,11 @@
 <body>
     <!-- Create header -->
     <div id="header" style="height: 15vh;">
-        <h1>DroneTurret</h1>
+        <div>
+            <h1>DroneTurret</h1>
+            <h2 class="mode-text">Mode</h2>
+        </div>
+
         <!-- Debug data lat, long, pitch and tilt of antenna -->
         <div class="header-text">
             <p>Horizontal pitch: 10°</p>
@@ -119,19 +134,22 @@
             <div class="arrow-head"></div>
         </div>
     </div>
-    <!-- Javascript for arrows -->
+    <!-- Javascript for arrows and mode text -->
     <script>
         // Define arrows
         const v_arrow = document.querySelector('#vertical-arrow');
         const h_arrow = document.querySelector('#horizontal-arrow');
         const arrows = document.querySelectorAll('.arrow');
-
+        const mode_text = document.querySelector('.mode-text');
+        
         // Set arrow colors
         function setArrowColors(color) {
             arrows.forEach(arrow => {
                 arrow.querySelector('.arrow-shaft').style.background = color;
                 arrow.querySelector('.arrow-head').style.borderLeftColor = color;
+                mode_text.style.color = color;
             });
+
         }
 
         // Set arrow angles
@@ -139,13 +157,17 @@
             arrow.style.setProperty('--angle', `${angle}deg`);
         }
 
+
+        function setModeText(mode) {
+            mode_text.textContent = mode;
+        }
+
         setArrowAngle(v_arrow, 90);
         setArrowAngle(h_arrow, 90);
 
         setArrowColors('lime')
+        setModeText('Jamming');
     </script>
-
-
     <!-- Javascript for websocket communication-->
     <script>
         const socket = new WebSocket("ws://{{ip}}:8082"); // <-- must match Python port
@@ -163,6 +185,7 @@
             if (typeof data.horizontal_angle === "number") setArrowAngle(h_arrow, data.horizontal_angle);
             if (typeof data.vertical_angle === "number") setArrowAngle(v_arrow, data.vertical_angle);
             if (typeof data.color === "string") setArrowColors(data.color);
+            if (typeof data.mode === "string") setModeText(data.mode);
 
             // Optional: update header text too
             const header = document.querySelector("#header .header-text");

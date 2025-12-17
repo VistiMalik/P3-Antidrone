@@ -1,18 +1,54 @@
 import time
+import random
+import numpy as np
+import math
+import SoapySDR
 import utils.modes as modes
 from utils.config import *
 import utils.motorUtils as motorUtils
-import random
+
 
 # Global variable to keep track of the current scan section
 baseline_avgs = {}   # Baseline averages for the 101 sections
-# newbaseline_sums = [0.0] * 101  # New baseline sums for 101 sections
-# newbaseline_avgs = []   # New baseline averages for the 101 sections
+sdr = None  # Global SDR object
+max_rssi = None
+
+
+def setupHackRF():
+    global sdr
+    devices = SoapySDR.Device.enumerate()
+    sdr = SoapySDR.Device(devices[0])  # Assuming the first device is the HackRF
+    sdr.setSampleRate(SoapySDR.SOAPY_SDR_RX, 0, 20e6)
+    sdr.setGain(SoapySDR.SOAPY_SDR_RX, 0, 30)
+
+    rxStream = sdr.setupStream(SoapySDR.SOAPY_SDR_RX, SoapySDR.SOAPY_SDR_CF32)
+    sdr.activateStream(rxStream)
+
+
 
 
 def readRssi():
-    # Placeholder function to simulate updating RF values for a given section
-    return random.randint(30, 70)  # Example RSSI value
+    global sdr
+    global max_rssi
+    buff = np.empty(4096, np.complex64)
+    result = []
+    for freq in channels:
+        sdr.setFrequency(SoapySDR.SOAPY_SDR_RX, 0, freq * 1e6)
+        time.sleep(0.05)  # allow tuner to settle
+        
+        sr = sdr.readStream(rxStream, [buff], len(buff))
+        if sr.ret > 0:
+            power = np.mean(np.abs(buff)**2)
+            rssi = 10 * math.log10(power)
+            result.append(rssi)
+
+    max_rssi = max(result)
+    return result
+
+def getMaxRssi():
+    global max_rssi
+    return max_rssi
+    
 
 # Function to scan for every section and iterate through sections
 def scanBaseline():

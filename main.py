@@ -1,13 +1,20 @@
 import utils.modes as modes
 import utils.motorUtils as motorUtils
+import utils.rfUtils as rfUtils
 import website
 import threading
 import asyncio
+import time
 
 # Global event to control the turret loop safely
 stop_turret_event = threading.Event()
 
 def run_turret():
+    while True:
+        rfUtils.setupHackRF()
+        rfUtils.readRssi()
+        print(rfUtils.getMaxRssi())
+        time.sleep(1)
     try:
         modes.setupMode()
         # Loop runs only while the turret event is NOT set

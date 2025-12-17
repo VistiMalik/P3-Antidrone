@@ -1,7 +1,7 @@
 # Module for configuration constants for the antidrone system
 
 # IP and Port settings:
-IP = "127.0.0.1"  # IP address of the Raspberry Pi
+IP = "192.168.2.3"  # IP address of the Raspberry Pi
 
 # RSSI threshold for entering search mode:
 rssi_threshold = 100  # RSSI threshold for drone detection (test value)
@@ -33,3 +33,5 @@ latitude = 0.0  # Placeholder for latitude
 longitude = 0.0  # Placeholder for longitude
 
 setup_sweep_count = 3  # Number of setup sweeps to establish baseline
+
+channels = [2445, 2435, 2461]  # Frequencies in MHz to scan for drones

@@ -23,7 +23,7 @@ def setupHackRF():
     devices = SoapySDR.Device.enumerate()
     sdr = SoapySDR.Device(devices[0])  # Assuming the first device is the HackRF
     sdr.setSampleRate(SoapySDR.SOAPY_SDR_RX, 0, 10e6)
-    sdr.setFrequency(SoapySDR.SOAPY_SDR_RX, 0, 100e6)
+    sdr.setFrequency(SoapySDR.SOAPY_SDR_RX, 0, channels)
     sdr.setGain(SoapySDR.SOAPY_SDR_RX, 0, 20)
     rxStream = sdr.setupStream(SoapySDR.SOAPY_SDR_RX, SoapySDR.SOAPY_SDR_CF32)
     sdr.activateStream(rxStream)
@@ -39,9 +39,10 @@ def readRssi():
         
         if sr.ret > 0:
             power = np.mean(np.abs(buff)**2)
-            rssi = 10 * math.log10(power)
-    
-    return rssi
+            print(power)
+            rssi_dbfs = 10 * math.log10(power)
+            print(f"Estimated RSSI: {rssi_dbfs:.2f} dBFS")
+        return rssi_dbfs
 
 
 def getMaxRssi():

@@ -18,7 +18,7 @@ rssi = None  # Global variable to store the latest RSSI value
 def readRssi():
     global rssi
     result = subprocess.run(
-    ["python3", "hackRFInteraction.py"],
+    ["python3", "utils/hackRFInteraction.py"],
     capture_output=True,
     text=True)
 

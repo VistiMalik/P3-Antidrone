@@ -7,9 +7,9 @@ IP = "172.20.10.2"  # IP address of the Raspberry Pi
 rssi_threshold = 10  # RSSI threshold for drone detection (test value)
 
 # Movement speed settings:
-speedSetup = 0.00005  # Move speed during setup phase
-speedIdle = 0.00001  # Move speed during idle state
-speedSearch = 0.000005  # Move speed during search operations
+speedSetup = 0.000075  # Move speed during setup phase
+speedIdle = 0.00002  # Move speed during idle state
+speedSearch = 0.00001  # Move speed during search operations
 
 # Scan time:
 scanTime = 0.05  # Time duration for scanning in seconds (Halts movement during scan)

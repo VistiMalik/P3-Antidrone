@@ -20,7 +20,7 @@ def setSetupMode():
                 motorUtils.movHorizontal(18, speedSetup) # Move right by 18 degrees
         
         motorUtils.resetPosition() # Return to the top-position after each full scan
-        time.sleep(0.1)  # Short delay between opposite movements
+        time.sleep(0.5)  # Short delay between opposite movements
 
 
 # Idle mode routine for the drone
@@ -37,7 +37,7 @@ def setIdleMode():
             rfUtils.scan()
             motorUtils.movHorizontal(18, speedIdle)
     motorUtils.resetPosition()
-    time.sleep(0.1)  # Short delay between opposite movements
+    time.sleep(0.5)  # Short delay between opposite movements
 
 
 #  Search Mode for the antidrone system
@@ -61,3 +61,4 @@ def setSearchMode():
     time.sleep(1)
     print("Going back to idle mode.")
     motorUtils.resetPosition()
+    time.sleep(0.5)  # Short delay between opposite movements

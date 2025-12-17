@@ -27,7 +27,7 @@ GEAR_RATIO = 3  # Gear ratio for vertical motor
 PULL_H = 4
 PULL_V = 22
 DIR_H = 17
-DIR_V = 25
+DIR_V = 10
 
 latitude = 0.0  # Placeholder for latitude
 longitude = 0.0  # Placeholder for longitude

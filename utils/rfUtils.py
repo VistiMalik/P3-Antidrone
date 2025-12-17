@@ -22,8 +22,8 @@ def readRssi():
     capture_output=True,
     text=True)
 
-    print(result.stdout)
-    return 0
+    rssi = float(result.stdout.strip())
+    return rssi
 
 
 def getMaxRssi():

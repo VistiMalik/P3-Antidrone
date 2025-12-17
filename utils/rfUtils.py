@@ -33,7 +33,7 @@ def setupHackRF():
 
 def readRssi():
     global sdr, rxStream, rssi
-    rssi = None
+    rssi_dbfs = None
     for i in range(100,150):
         # Read samples
         buff = np.empty(4096, np.complex64)

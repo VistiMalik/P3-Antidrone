@@ -48,15 +48,16 @@ def movHorizontal(degrees, speed):
         time.sleep(speed)
         steps_moved += 1
 
-    delta = steps_moved * ANGLE_PER_MICROSTEP * direction    
-    coords["horizontal"] += delta
-    coords["horizontal"] %= 360  
+        coords["horizontal"] += ANGLE_PER_MICROSTEP * direction
+        coords["horizontal"] %= 360  
     direction = 1
     GPIO.output(DIR_H, GPIO.LOW) # Turn off/reset direction pin
 
 # Move stepper motor 2 (Vertical)
 def movVertical(degrees, speed):
     global coords
+
+    ###### Trapezoidal profile can be implemented here for smoother movement ######
 
     # Check if move is within bounds (0-90 degrees)
     if coords["vertical"] + degrees > vert_max or coords["vertical"] + degrees < vert_min:
@@ -81,9 +82,10 @@ def movVertical(degrees, speed):
             GPIO.output(PULL_V, GPIO.LOW)
             time.sleep(speed)
             steps_moved += 1
-            
-            coords["vertical"] += 1.8/32/3*direction
-            coords["vertical"] %= 360  
+                
+            coords["vertical"] += (ANGLE_PER_MICROSTEP / GEAR_RATIO) * direction
+        direction = 1
+            # coords["vertical"] %= 360  # It should not be necessary to wrap vertical position
         
         direction = 1
         GPIO.output(DIR_V, GPIO.LOW) # Turn off/reset direction pin

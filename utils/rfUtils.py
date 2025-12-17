@@ -36,12 +36,23 @@ def readRssi():
     for i in range(100,150):
         # Read samples
         buff = np.empty(4096, np.complex64)
-        sr = sdr.readStream(rxStream, [buff], len(buff))
+        for _ in range(50):
+            sr = sdr.readStream(rxStream, [buff], len(buff))
+            if sr.ret <= 0:
+                continue
+            
+            x = buff[:sr.ret]
+            power = float(np.mean((x.real * x.real) + (x.imag * x.imag)))
+
+            if not math.isfinite(power) or power <= 0.0:
+                continue
         
-        if sr.ret > 0:
-            power = np.mean(np.abs(buff)**2)
+
+            rssi_dbfs = 10.0 * math.log10(power + 1e-12)
+            rssi = rssi_dbfs  # store globally
+        
+
             print(power)
-            rssi_dbfs = 10 * math.log10(power)
             print(f"Estimated RSSI: {rssi_dbfs:.2f} dBFS")
         return rssi_dbfs
 

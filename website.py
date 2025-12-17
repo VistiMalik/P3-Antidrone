@@ -43,9 +43,7 @@ async def console_loop():
     while True:
         coords = motorUtils.getCoords()
         mode = modes.getCurrentMode()
-        
-        print(coords)
-        print(mode)
+
         h_angle = coords["horizontal"]
         v_angle = coords["vertical"]
         if mode == 0: color = "blue"; mode = "SETUP"

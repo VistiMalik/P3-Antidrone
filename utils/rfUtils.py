@@ -1,97 +1,46 @@
 import time
 import utils.modes as modes
-
 from utils.config import *
+import random
 
 # Global variable to keep track of the current scan section
-scan_section = 0
-iteration_baseline = 0
-iteration = 0
-baseline_sums = [0.0] * 101  # Baseline sums for 101 sections
+baseline_long = []
 baseline_avgs = []   # Baseline averages for the 101 sections
+baseline_len = 0
 # newbaseline_sums = [0.0] * 101  # New baseline sums for 101 sections
 # newbaseline_avgs = []   # New baseline averages for the 101 sections
 
+
+def readRssi():
+    # Placeholder function to simulate updating RF values for a given section
+    return random.randint(30, 70)  # Example RSSI value
+
 # Function to scan for every section and iterate through sections
-def scanBaseline():
-    global scan_section
-    global iteration_baseline
+def scanBaseline(round):
     global baseline_avgs
-    print("Scanning section:", scan_section)
-    time.sleep(scanTime)  # Delay for scanning
+    global baseline_long
+    global baseline_len
 
-    rfUpdateBaselineValues(scan_section)  # update RF values for every section
-    scan_section += 1
-    if scan_section > 100:
-        scan_section = 0
-        iteration_baseline += 1
-        if iteration_baseline > 2:
-            iteration_baseline = 0
-            baseline_avgs = [x / 3 for x in baseline_sums] # calculate averages
-            print("Baseline averages calculated:", baseline_avgs)
+    if round == 1 and baseline_len == 0:
+        baseline_len = len(baseline_long)
     
-    return scan_section
+    baseline_long.append(readRssi())
 
-def rfUpdateBaselineValues(section):
-    # Placeholder function to simulate updating RF values for a given section
-    print(f"Updating baseline RF values for section {section}")
+    if len(baseline_long) == 3 * baseline_len:
+        for reading in range(baseline_len):
+            baseline_avgs.append((baseline_long[reading]+baseline_long[reading+baseline_len]+baseline_long[reading+2*baseline_len])/3)
 
-    # getRFValue(value)  # Example call to get RF value
-    test_value = 42  # Placeholder for actual RF value
-    baseline_sums[section] += test_value
-
-    # Actual implementation would go here
-
-
-def scan():
-    global scan_section
-    global iteration
-    global baseline_sums
-    print("Scanning section:", scan_section)
-    time.sleep(scanTime)  # Delay for scanning
-    # rf_value = getRFValue()  # Example call to get RF value
-
-    was_search_mode = rfCompValues(scan_section)#,rf_value)  # update RF values for every section
-
-    if was_search_mode:
-        print("Going to idle mode")
-        baseline_sums = [0.0] * 101  # reset baseline sums
-        modes.setIdleMode()  # Go back to idle mode af ended search mode
-    else:
-        scan_section += 1
-        if scan_section > 100:
-            scan_section = 0
-            iteration += 1
-            if iteration > 2:
-                iteration = 0
-                # newbaseline_avgs = [x / 3 for x in newbaseline_sums] # calculate averages
-                # print("New baseline averages calculated:", newbaseline_avgs)
-                # baseline_avgs = newbaseline_avgs.copy()
-                # newbaseline_sums = [0.0] * 100  # reset new baseline sums
-    
-    return scan_section
-
-def getRssiAndThreshold(section):#,rf_value):
-    global rssi_threshold
-    # Placeholder function to simulate updating RF values for a given section
-    print(f"Updating RF values for section {section}")
-
-    test_rf_value = 53  # Placeholder for actual RF value
-    comp_value = test_rf_value - baseline_avgs[section]
+def getRssiSubBaseline(section):#,rf_value):
+    global baseline_avgs
+    rssi_value = readRssi()  
+    comp_value = rssi_value - baseline_avgs[section]
     return comp_value
     
-    
-def rfCompValues(section): 
-    comp_value = getRssiAndThreshold(section)
+def rfCompBaseline(section): 
+    comp_value = getRssiSubBaseline(section)
     if comp_value > rssi_threshold: 
         print("Drone detected! Entering search mode.") 
         modes.setSearchMode()
         return True
     else:
         return False  # Example comparison
-    
-def rfHillClimb():
-    # Placeholder function to simulate hill climbing algorithm
-    print("Performing hill climbing to refine drone location...")
-    
-    # Actual implementation would go here

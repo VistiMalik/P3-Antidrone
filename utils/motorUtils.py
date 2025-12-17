@@ -25,7 +25,7 @@ def setup():
 
 
 # Move stepper motor 1 (Horizontal)
-def movHorizontal(degrees, speed):
+def movHorizontal(degrees, speed=0.001):
     global coords
 
     steps_moved = 0
@@ -54,7 +54,7 @@ def movHorizontal(degrees, speed):
     GPIO.output(DIR_H, GPIO.LOW) # Turn off/reset direction pin
 
 # Move stepper motor 2 (Vertical)
-def movVertical(degrees, speed):
+def movVertical(degrees, speed=0.001):
     global coords
 
     ###### Trapezoidal profile can be implemented here for smoother movement ######
@@ -92,8 +92,25 @@ def movVertical(degrees, speed):
 
 def resetPosition():
     global coords
-    movHorizontal(-coords["horizontal"] + horz_start_pos, speedIdle)
-    movVertical(-coords["vertical"] + vert_start_pos, speedIdle)
+    delta_h_1 = 360 - coords["horizontal"] + horz_start_pos % 360
+    delta_v_1 = 360 - coords["vertical"] + vert_start_pos % 360
+    delta_h_2 = -coords["horizontal"] + horz_start_pos
+    delta_v_2 = -coords["vertical"] + vert_start_pos
+
+    if abs(delta_h_1) < abs(delta_h_2):
+        delta_h = delta_h_1
+    else:
+        delta_h = delta_h_2
+    
+    if abs(delta_v_1) < abs(delta_v_2):
+        delta_v = delta_v_1
+    else:
+        delta_v = delta_v_2
+
+    print(delta_v)
+    print(delta_h)
+    movHorizontal(delta_h, speedIdle)
+    movVertical(delta_v, speedIdle)
 
 
 def getCoords():

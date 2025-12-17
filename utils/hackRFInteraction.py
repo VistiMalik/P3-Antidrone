@@ -51,7 +51,8 @@ def closeHackRF():
 
 def main():
     setupHackRF()
-    readRssi()
+    rssi = readRssi()
+    print(rssi)
     closeHackRF()
 
 if __name__ == "__main__":

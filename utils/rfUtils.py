@@ -29,33 +29,45 @@ def setupHackRF():
     rxStream = sdr.setupStream(SoapySDR.SOAPY_SDR_RX, SoapySDR.SOAPY_SDR_CF32)
     sdr.activateStream(rxStream)
 
+def closeHackRF():
+    global sdr, rxStream
+    try:
+        if rxStream is not None:
+            sdr.deactivateStream(rxStream)
+            sdr.closeStream(rxStream)
+    except Exception:
+        pass
+    rxStream = None
+    sdr = None
 
 
 def readRssi():
     global sdr, rxStream, rssi
+    setupHackRF()
     rssi_dbfs = None
-    for i in range(100,150):
-        # Read samples
-        buff = np.empty(4096, np.complex64)
-        for _ in range(50):
-            sr = sdr.readStream(rxStream, [buff], len(buff))
-            if sr.ret <= 0:
-                continue
-            
-            x = buff[:sr.ret]
-            power = float(np.mean((x.real * x.real) + (x.imag * x.imag)))
 
-            if not math.isfinite(power) or power <= 0.0:
-                continue
+    # Read samples
+    buff = np.empty(4096, np.complex64)
+    for _ in range(50):
+        sr = sdr.readStream(rxStream, [buff], len(buff))
+        if sr.ret <= 0:
+            continue
         
+        x = buff[:sr.ret]
+        power = float(np.mean((x.real * x.real) + (x.imag * x.imag)))
 
-            rssi_dbfs = 10.0 * math.log10(power + 1e-12)
-            rssi = rssi_dbfs  # store globally
-        
+        if not math.isfinite(power) or power <= 0.0:
+            continue
+    
 
-            print(power)
-            print(f"Estimated RSSI: {rssi_dbfs:.2f} dBFS")
-        return rssi_dbfs
+        rssi_dbfs = 10.0 * math.log10(power + 1e-12)
+        rssi = rssi_dbfs  # store globally
+    
+
+        print(power)
+        print(f"Estimated RSSI: {rssi_dbfs:.2f} dBFS")
+    closeHackRF()
+    return rssi_dbfs
 
 
 def getMaxRssi():

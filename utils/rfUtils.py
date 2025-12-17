@@ -20,7 +20,7 @@ def setupHackRF():
     global rxStream
     devices = SoapySDR.Device.enumerate()
     sdr = SoapySDR.Device(devices[0])  # Assuming the first device is the HackRF
-    sdr.setSampleRate(SoapySDR.SOAPY_SDR_RX, 0, 20e6)
+    sdr.setSampleRate(SoapySDR.SOAPY_SDR_RX, 0, 10e6)
     sdr.setGain(SoapySDR.SOAPY_SDR_RX, 0, 30)
 
     rxStream = sdr.setupStream(SoapySDR.SOAPY_SDR_RX, SoapySDR.SOAPY_SDR_CF32)
@@ -32,15 +32,17 @@ def readRssi():
     global max_rssi
     buff = np.empty(4096, np.complex64)
     result = []
-    for freq in channels:
-        sdr.setFrequency(SoapySDR.SOAPY_SDR_RX, 0, freq * 1e6)
-        time.sleep(0.05)  # allow tuner to settle
-        
-        sr = sdr.readStream(rxStream, [buff], len(buff))
-        if sr.ret > 0:
-            power = np.mean(np.abs(buff)**2)
-            rssi = 10 * math.log10(power)
-            result.append(rssi)
+    while len(results) <= 0:
+        for freq in channels:
+            sdr.setFrequency(SoapySDR.SOAPY_SDR_RX, 0, freq * 1e6)
+            time.sleep(0.05)  # allow tuner to settle
+            
+            sr = sdr.readStream(rxStream, [buff], len(buff), timeoutUs=int(200000))
+            if sr.ret > 0:
+                samples = buff[:sr.ret]
+                power = np.mean(np.abs(samples)**2)
+                rssi = 10 * math.log10(power)
+                result.append(rssi)
 
     max_rssi = max(result)
     return result

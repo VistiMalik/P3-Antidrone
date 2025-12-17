@@ -32,6 +32,7 @@ def readRssi():
         except Exception as e:
             print(e)
             time.sleep(0.2)
+    return rssi
 
 # Function to scan for every section and iterate through sections
 def scanBaseline():

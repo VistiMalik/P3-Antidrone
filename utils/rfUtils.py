@@ -18,21 +18,20 @@ rssi = None  # Global variable to store the latest RSSI value
 # Read RSSI value from HackRF (Cursed cause the HackRF is broken af)
 def readRssi():
     global rssi
-    for channel in channels:
-        for i in range(50): # Try up to 50 times, such we can get errors and still continue with correct values
-            # Spawn new python process to read RSSI with frequencies as arguments
-            result = subprocess.run(
-            ["python3", "utils/hackRFInteraction.py", f"{channels[0]}"],
-            capture_output=True,
-            text=True)
+    for i in range(50): # Try up to 50 times, such we can get errors and still continue with correct values
+        # Spawn new python process to read RSSI with frequencies as arguments
+        result = subprocess.run(
+        ["python3", "utils/hackRFInteraction.py", f"{channels[0]}"],
+        capture_output=True,
+        text=True)
 
-            # Try to convert output to float and return if it doesnt work wait and try to get result again
-            try:
-                rssi = float(result.stdout.strip())
-                continue
-            except:
-                time.sleep(0.2)
-    return rssi
+        # Try to convert output to float and return if it doesnt work wait and try to get result again
+        try:
+            rssi = float(result.stdout.strip())
+            continue
+        except Exception as e:
+            print(e)
+            time.sleep(0.2)
 
 # Function to scan for every section and iterate through sections
 def scanBaseline():

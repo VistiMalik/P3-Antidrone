@@ -9,10 +9,10 @@ stop_turret_event = threading.Event()
 
 def run_turret():
     try:
-        modes.setSetupMode()
+        modes.setupMode()
         # Loop runs only while the turret event is NOT set
         while not stop_turret_event.is_set():
-            modes.setIdleMode()
+            modes.idleMode()
     except Exception as e:
         print(f"An error occurred in turret operation: {e}")
 

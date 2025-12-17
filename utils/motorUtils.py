@@ -1,6 +1,7 @@
 import RPi.GPIO as GPIO
 import time
 from utils.config import *
+import utils.motorUtils as motorUtils
 
 # Constants:
 STEP_ANGLE = 1.8
@@ -90,6 +91,17 @@ def movVertical(degrees, speed=0.001):
         direction = 1
         GPIO.output(DIR_V, GPIO.LOW) # Turn off/reset direction pin
 
+def getCoords():
+    global coords
+    return coords
+
+def getCoordString():
+    coords = motorUtils.getCoords()
+    vert = round(coords["vertical"], 0)
+    horz = round(coords["horizontal"], 0)
+    coord_string = f"{vert}_{horz}"
+    return coord_string
+
 def resetPosition():
     global coords
     delta_h_1 = 360 - coords["horizontal"] + horz_start_pos % 360
@@ -107,14 +119,7 @@ def resetPosition():
     else:
         delta_v = delta_v_2
 
-    print(delta_v)
-    print(delta_h)
     movHorizontal(delta_h, speedIdle)
     movVertical(delta_v, speedIdle)
-
-
-def getCoords():
-    global coords
-    return coords
 
 setup()

@@ -31,3 +31,5 @@ DIR_V = 25
 
 latitude = 0.0  # Placeholder for latitude
 longitude = 0.0  # Placeholder for longitude
+
+setup_sweep_count = 3  # Number of setup sweeps to establish baseline

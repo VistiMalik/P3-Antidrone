@@ -37,7 +37,8 @@ def readRssi():
             sdr.setFrequency(SoapySDR.SOAPY_SDR_RX, 0, freq * 1e6)
             time.sleep(0.1)  # allow tuner to settle
             
-            sr = sdr.readStream(rxStream, [buff], 4096, timeoutUs=int(200000))
+            sr = sdr.readStream(rxStream, [buff], 4096*2, timeoutUs=int(200000))
+
             if sr.ret > 0:
                 iq = buff[: sr.ret * 2].astype(np.float32)
                 i = iq[0::2]

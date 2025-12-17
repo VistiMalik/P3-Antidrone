@@ -3,6 +3,7 @@ import json
 import websockets
 import utils.motorUtils as motorUtils
 import utils.modes as modes
+import utils.rfUtils as rfUtils
 import time
 import flask
 from utils.config import *
@@ -18,12 +19,14 @@ clients = set()
 async def broadcast():
     global h_angle, v_angle, mode, color, latitude, longitude
 
+    rssi = rfUtils.getRssi()
     msg = json.dumps({
         "horizontal_angle": round(h_angle, 1),
         "vertical_angle": round(-90 + v_angle % 360, 1),
         "mode": mode,
         "color": color,
-        "latlong": [latitude, longitude]
+        "latlong": [latitude, longitude],
+        "rssi": round(rssi, 2) 
     })
     for ws in list(clients):
          await ws.send(msg)

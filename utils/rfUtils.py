@@ -33,6 +33,10 @@ def readRssi():
             print(e)
             time.sleep(0.2)
     
+# Dont read just return latest reading
+def getRssi():
+    global rssi
+    return rssi
 
 # Function to scan for every section and iterate through sections
 def scanBaseline():

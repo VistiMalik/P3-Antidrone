@@ -118,6 +118,10 @@
             <p id="lat-debug">Lat: NaN</p>
             <p id="long-debug">Lon: NaN</p>
         </div>
+        <div class="header-text">
+            <p id="rssi-debug">Lat: NaN</p>
+            <p> </p>
+        </div>
         <!-- Arrow to show vertical tilt -->
         <div class="arrow" id="vertical-arrow" style="margin-left: auto; margin-right: 10vh;">
             <div class="arrow-shaft" style="width: 7.5vh;"></div>
@@ -145,7 +149,7 @@
         const h_debug = document.querySelector('#h_debug');
         const lat_debug = document.querySelector('#lat-debug');
         const long_debug = document.querySelector('#long-debug');
-        
+        const rssi_debug = document.querySelector("#rssi-debug");
         // Set arrow colors
         function setArrowColors(color) {
             arrows.forEach(arrow => {
@@ -172,6 +176,10 @@
 
         function updateDebugVertical(v_angle) {
             v_debug.textContent = `Vertical tilt: ${v_angle}°`;
+        }
+
+        function updateDebugRssi(rssi) {
+            rssi_debug.textContent = `RSSI: ${rssi}°`;
         }
 
         function updateLocation(latlong) {

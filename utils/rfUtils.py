@@ -6,6 +6,7 @@ import SoapySDR
 import utils.modes as modes
 from utils.config import *
 import utils.motorUtils as motorUtils
+import threading
 
 
 # Global variable to keep track of the current scan section
@@ -13,6 +14,7 @@ baseline_avgs = {}   # Baseline averages for the 101 sections
 sdr = None  # Global SDR object
 rxStream = None  # Global RX stream object
 max_rssi = None
+sdr_lock = threading.Lock()
 
 
 def setupHackRF():
@@ -33,36 +35,27 @@ def readRssi():
     buff = np.empty(4096, np.complex64)
     result = []
 
-    # Keep trying until we get at least one valid measurement per channel
-    while not result:
-        result = []
+    with sdr_lock:
         for freq in channels:
             sdr.setFrequency(SoapySDR.SOAPY_SDR_RX, 0, freq * 1e6)
-
-            # Let tuner settle a bit
             time.sleep(0.05)
 
-            # Flush a couple buffers after retune
+            # flush a couple reads
             for _ in range(2):
                 sr = sdr.readStream(rxStream, [buff], len(buff))
-                if sr.ret <= 0:
+                if sr.ret < 0:
+                    # error codes: just skip this freq for now
                     continue
 
-            # Now take one "real" read
             sr = sdr.readStream(rxStream, [buff], len(buff))
             if sr.ret > 0:
                 x = buff[:sr.ret]
-
-                # Power estimate (mean-square magnitude)
                 power = np.mean((x.real * x.real) + (x.imag * x.imag))
-
-                # Avoid log(0)
                 rssi = 10.0 * math.log10(power + 1e-12)
                 result.append(rssi)
 
-        time.sleep(0.2)
-
-    max_rssi = max(result)
+    if result:
+        max_rssi = max(result)
     return result
 
 

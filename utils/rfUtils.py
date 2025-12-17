@@ -30,19 +30,22 @@ def readRssi():
     global sdr
     global rxStream
     global max_rssi
-    buff = np.empty(4096, np.complex64)
+    buff = np.empty(4096, np.int16)
     result = []
     while len(result) <= 0:
         for freq in channels:
             sdr.setFrequency(SoapySDR.SOAPY_SDR_RX, 0, freq * 1e6)
-            time.sleep(0.05)  # allow tuner to settle
+            time.sleep(0.1)  # allow tuner to settle
             
-            sr = sdr.readStream(rxStream, [buff], len(buff), timeoutUs=int(200000))
+            sr = sdr.readStream(rxStream, [buff], 4096, timeoutUs=int(200000))
             if sr.ret > 0:
-                samples = buff[:sr.ret]
-                power = np.mean(np.abs(samples)**2)
-                rssi = 10 * math.log10(power)
+                iq = buff[: sr.ret * 2].astype(np.float32)
+                i = iq[0::2]
+                q = iq[1::2]
+                power = np.mean((i*i + q*q) / (32768.0 * 32768.0))
+                rssi = 10.0 * math.log10(power)
                 result.append(rssi)
+        time.sleep(0.1)
 
     max_rssi = max(result)
     return result

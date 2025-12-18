@@ -2,7 +2,7 @@ import time
 import random
 import numpy as np
 import math
-import SoapySDR
+from python_hackrf import pyhackrf  
 import utils.modes as modes
 from utils.config import *
 import utils.motorUtils as motorUtils
@@ -16,88 +16,102 @@ sdr = None
 rxStream = None
 
 
+# -----------------------------
+# Settings
+# -----------------------------
+sample_rate = 20e6
+baseband_filter = 7.5e6
+lna_gain = 30
+vga_gain = 50
+
+# -----------------------------
+# Internal state
+# -----------------------------
+_sdr = None
+_lock = threading.Lock()
+_done = threading.Event()
+_target = 0
+_seen = 0
+_power_sum = 0.0
+
+
+def _rx_callback(device, buffer, buffer_length, valid_length):
+    global _seen, _power_sum
+
+    b = buffer[:valid_length].astype(np.int8)
+    iq = b[0::2].astype(np.float32) + 1j * b[1::2].astype(np.float32)
+    iq *= (1.0 / 128.0)
+
+    with _lock:
+        _power_sum += float(np.vdot(iq, iq).real)
+        _seen += iq.size
+        if _seen >= _target:
+            _done.set()
+
+    return 0
+
 def setupHackRF():
-    global sdr, rxStream
-    try:
-        # 1. Connect to device
-        devices = SoapySDR.Device.enumerate()
-        if len(devices) == 0:
-            print("ERROR: No HackRF found!")
-            return False
-        
-        sdr = SoapySDR.Device(devices[0])
-        
-        # 2. Configure settings
-        # Lowered sample rate to 2MHz (enough for RSSI, saves CPU/USB load)
-        sdr.setSampleRate(SoapySDR.SOAPY_SDR_RX, 0, 2e6) 
-        sdr.setFrequency(SoapySDR.SOAPY_SDR_RX, 0, channels[0] * 1e6)
-        sdr.setGain(SoapySDR.SOAPY_SDR_RX, 0, 30) # Slightly higher gain for detection
-        
-        # 3. Setup the stream (Allocates memory, but does not start it yet)
-        rxStream = sdr.setupStream(SoapySDR.SOAPY_SDR_RX, SoapySDR.SOAPY_SDR_CF32)
-        return True
-    except Exception as e:
-        print(f"Failed to setup SDR: {e}")
-        return False
+    global _sdr
+    pyhackrf.pyhackrf_init()
+    _sdr = pyhackrf.pyhackrf_open()
+
+    bw = pyhackrf.pyhackrf_compute_baseband_filter_bw_round_down_lt(baseband_filter)
+
+    _sdr.pyhackrf_set_sample_rate(sample_rate)
+    _sdr.pyhackrf_set_baseband_filter_bandwidth(bw)
+    _sdr.pyhackrf_set_antenna_enable(False)
+    _sdr.pyhackrf_set_amp_enable(False)
+    _sdr.pyhackrf_set_lna_gain(lna_gain)
+    _sdr.pyhackrf_set_vga_gain(vga_gain)
+
+    _sdr.set_rx_callback(_rx_callback)
 
 def closeHackRF():
-    global sdr, rxStream
-    if rxStream is not None:
-        sdr.closeStream(rxStream)
-    sdr = None
+    global _sdr
+    if _sdr:
+        try:
+            _sdr.pyhackrf_stop_rx()
+        except Exception:
+            pass
+        try:
+            _sdr.pyhackrf_close()
+        except Exception:
+            pass
+    pyhackrf.pyhackrf_exit()
+    _sdr = None
 
-# Read RSSI value from HackRF (Cursed cause the HackRF is broken af)
-def readRssi():
-    global rssi, sdr, rxStream
-    
-    # Safety check
-    if sdr is None:
-        print("SDR not initialized, trying to reconnect...")
-        setupHackRF()
+def set_freq(freq_hz: float):
+    _sdr.pyhackrf_set_freq(freq_hz)
+    time.sleep(0.02)  
 
-    # 1. Start the flow of data
-    sdr.activateStream(rxStream) 
-    
-    # Array to store accumulated power for averaging
-    power_readings = []
-    
-    # Create a buffer (numpy array) for the samples
-    buff = np.empty(1024, np.complex64) 
+def readRssi(num_samples: int = 50_000) -> float | None:
+    """
+    Returns RSSI as wideband power in dBFS.
+    """
+    global _seen, _power_sum, _target
 
+    with _lock:
+        _seen = 0
+        _power_sum = 0.0
+        _target = num_samples
+    _done.clear()
+
+    _sdr.pyhackrf_start_rx()
+    ok = _done.wait(timeout=2.0)
     try:
-        # We read a few buffers to get a stable average
-        for i in range(10): 
-            sr = sdr.readStream(rxStream, [buff], len(buff))
-            
-            # Error checking on the read
-            if sr.ret <= 0:
-                continue # Skip bad reads
-            
-            # Slice the valid data
-            valid_samples = buff[:sr.ret]
-            
-            # Calculate Power (I^2 + Q^2)
-            # We use absolute squared to be faster: (real^2 + imag^2)
-            power_val = np.mean(np.abs(valid_samples)**2)
-            
-            if power_val > 0:
-                power_readings.append(power_val)
-                
-    except Exception as e:
-        print(f"Read Error: {e}")
+        _sdr.pyhackrf_stop_rx()
+    except Exception:
+        pass
 
-    finally:
-        # 2. IMPORTANT: Stop the flow immediately to prevent buffer overflow/crash
-        sdr.deactivateStream(rxStream)
+    if not ok:
+        return None
 
-    # Calculate final RSSI in dB
-    if len(power_readings) > 0:
-        avg_power = np.mean(power_readings)
-        # 10*log10 because it is power. +1e-12 avoids log(0) error
-        rssi_dbfs = 10.0 * math.log10(avg_power + 1e-12)
-        rssi = rssi_dbfs # Update global
+    with _lock:
+        if _seen == 0 or _power_sum <= 0:
+            return None
+        mean_power = _power_sum / _seen
 
-    return rssi
+    return 10.0 * math.log10(mean_power + 1e-12)
 
 # Dont read just return latest reading
 def getRssi():

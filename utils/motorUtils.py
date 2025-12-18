@@ -100,8 +100,8 @@ def getCoordString():
     vert = str(round(coords["vertical"], 0) % 360).split(".")[0]
     horz = str(round(coords["horizontal"], 0) % 360).split(".")[0]
     coord_string = f"{vert}_{horz}"
-    print()
-    print(coord_string)
+    if vert == "0":
+        coord_string = "0_0"
     
     return coord_string
 

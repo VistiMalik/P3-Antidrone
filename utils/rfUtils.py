@@ -12,7 +12,8 @@ import subprocess
 # Global variable to keep track of the current scan section
 baseline_avgs = {}   # Baseline averages for the 101 sections
 rssi = -1000  # Global variable to store the latest RSSI value
-
+sdr = None
+rxStream = None
 
 
 def setupHackRF():

@@ -88,7 +88,7 @@ def readRssi(num_samples: int = 50_000) -> float | None:
     """
     Returns RSSI as wideband power in dBFS.
     """
-    global _seen, _power_sum, _target
+    global _seen, _power_sum, _target, rssi
 
     with _lock:
         _seen = 0
@@ -111,7 +111,8 @@ def readRssi(num_samples: int = 50_000) -> float | None:
             return None
         mean_power = _power_sum / _seen
 
-    return 10.0 * math.log10(mean_power + 1e-12)
+    rssi = 10.0 * math.log10(mean_power + 1e-12)
+    return rssi
 
 # Dont read just return latest reading
 def getRssi():

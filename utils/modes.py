@@ -56,7 +56,7 @@ def searchMode(from_jamming=False):
     CURRENT_MODE = 2
     threshold_reached_count = 0 # Count of consecutive RSSI readings above threshold
 
-    # If comming from jamming mode we start in small increments of 18 degs
+    # If comming from jamming mode we start in small increments of 9 degs
     if from_jamming:
         movement_scale = 9
     else:

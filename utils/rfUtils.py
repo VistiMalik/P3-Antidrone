@@ -12,6 +12,7 @@ import subprocess
 # Global variable to keep track of the current scan section
 baseline_avgs = {}   # Baseline averages for the 101 sections
 rssi = -1000  # Global variable to store the latest RSSI value
+rssi_lst = [-1000]*10
 comp_value = 0  # Global variable to store the latest baseline subtracted value
 sdr = None
 rxStream = None
@@ -89,7 +90,7 @@ def readRssi(num_samples: int = 250_000) -> float | None:
     """
     Returns RSSI as wideband power in dBFS.
     """
-    global _seen, _power_sum, _target, rssi
+    global _seen, _power_sum, _target, rssi, rssi_lst
 
     with _lock:
         _seen = 0
@@ -113,12 +114,15 @@ def readRssi(num_samples: int = 250_000) -> float | None:
         mean_power = _power_sum / _seen
 
     rssi = 10.0 * math.log10(mean_power + 1e-12)
+    rssi_lst.append(rssi)
+    rssi_lst.remove(rssi_lst[0])
     return rssi
 
 # Dont read just return latest reading
 def getRssi():
-    global rssi
-    return rssi
+    global rssi_lst
+    max_rssi = max(rssi_lst)
+    return max_rssi
 
 # Don't calculate just return latest reading with baseline subtracted
 def getCompValue():

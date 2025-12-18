@@ -120,7 +120,7 @@
         </div>
         <div class="header-text">
             <p id="rssi-debug">RSSI: NaN</p>
-            <p id="diff-debug">Base diff: Nan</p>
+            <p id="diff-debug">Base diff: NaN</p>
         </div>
         <!-- Arrow to show vertical tilt -->
         <div class="arrow" id="vertical-arrow" style="margin-left: auto; margin-right: 10vh;">
@@ -150,7 +150,7 @@
         const lat_debug = document.querySelector('#lat-debug');
         const long_debug = document.querySelector('#long-debug');
         const rssi_debug = document.querySelector("#rssi-debug");
-        const base_diff = document.querySelector('#diff-debug')
+        const diff_debug = document.querySelector('#diff-debug')
         // Set arrow colors
         function setArrowColors(color) {
             arrows.forEach(arrow => {
@@ -192,7 +192,7 @@
         }
 
         function updateBaseDiff(diff) {
-            base_diff_debug.textContent = `Base diff: ${diff}`;
+            diff_debug.textContent = `Base diff: ${diff}`;
         }
     </script>
     <!-- Javascript for websocket communication-->

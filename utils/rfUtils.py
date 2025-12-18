@@ -12,7 +12,7 @@ import subprocess
 # Global variable to keep track of the current scan section
 baseline_avgs = {}   # Baseline averages for the 101 sections
 rssi = -1000  # Global variable to store the latest RSSI value
-rssi_lst = [-1000]*10
+rssi_lst = [-1000]*5
 comp_value = 0  # Global variable to store the latest baseline subtracted value
 sdr = None
 rxStream = None
@@ -121,8 +121,8 @@ def readRssi(num_samples: int = 250_000) -> float | None:
 # Dont read just return latest reading
 def getRssi():
     global rssi_lst
-    max_rssi = max(rssi_lst)
-    return max_rssi
+    avg_rssi = sum(rssi_lst) / len(rssi_lst)
+    return avg_rssi
 
 # Don't calculate just return latest reading with baseline subtracted
 def getCompValue():

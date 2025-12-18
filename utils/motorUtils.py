@@ -95,8 +95,7 @@ def getCoords():
     global coords
     return coords
 
-def getCoordString():
-    global 
+def getCoordString(): 
     coords = motorUtils.getCoords()
     vert = round(coords["vertical"], 0) % 360
     horz = round(coords["horizontal"], 0) % 360

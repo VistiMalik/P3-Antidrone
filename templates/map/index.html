@@ -189,6 +189,10 @@
         function updateLon(lon) {
             long_debug.textContent = `Lon: ${lon.toFixed(6)}`;
         }
+
+        function updateBaseDiff(diff) {
+            base_diff_debug.textContent = `Base diff: ${diff}`;
+        }
     </script>
     <!-- Javascript for websocket communication-->
     <script>
@@ -211,6 +215,7 @@
             if (typeof data.rssi === "number") updateDebugRssi(data.rssi);
             if (typeof data.lat === "number") updateLat(data.lat);
             if (typeof data.lon === "number") updateLon(data.lon);
+            if (typeof data.base_diff === "number") updateBaseDiff(data.base_diff);
             
             // Optional: update header text too
             const header = document.querySelector("#header .header-text");

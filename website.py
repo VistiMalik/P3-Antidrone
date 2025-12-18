@@ -21,12 +21,14 @@ async def broadcast():
     global h_angle, v_angle, mode, color, latitude, longitude
 
     rssi = rfUtils.getRssi()
+    base_diff = rfUtils.getCompValue()
     msg = json.dumps({
         "horizontal_angle": round(h_angle, 1),
         "vertical_angle": round(-90 + v_angle % 360, 1),
         "mode": mode,
         "color": color,
         "rssi": round(rssi, 2) ,
+        "base_diff": round(base_diff, 2),
         "lat": latitude,
         "lon": longitude
         })

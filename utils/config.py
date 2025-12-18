@@ -4,7 +4,13 @@
 IP = "172.20.10.3"  # IP address of the Raspberry Pi
 
 # RSSI threshold for entering search mode:
-rssi_threshold = 100  # RSSI threshold for drone detection (test value)
+rssi_threshold = 10  # RSSI threshold for drone detection (test value in dB)
+
+# Variable to confirm threshold breaches:
+threshold_confirm_iterations = 20  # Number of readings to check for threshold breach confirmation
+threshold_breach_percentage = 0.7  # Percentage of readings that must exceed threshold to confirm breach
+go_small_mode_percentage = 0.85  # Percentage of readings that must exceed threshold to switch to small mode
+
 
 # Movement speed settings:
 speedSetup = 0.00008  # Move speed during setup phase

@@ -12,6 +12,7 @@ import subprocess
 # Global variable to keep track of the current scan section
 baseline_avgs = {}   # Baseline averages for the 101 sections
 rssi = -1000  # Global variable to store the latest RSSI value
+comp_value = 0  # Global variable to store the latest baseline subtracted value
 sdr = None
 rxStream = None
 
@@ -119,6 +120,11 @@ def getRssi():
     global rssi
     return rssi
 
+# Don't calculate just return latest reading with baseline subtracted
+def getCompValue():
+    global comp_value
+    return comp_value
+
 # Function to scan for every section and iterate through sections
 def scanBaseline():
     global baseline_avgs
@@ -133,6 +139,7 @@ def scanBaseline():
 # Get RSSI value subtracted by baseline average for current position
 def getRssiSubBaseline():
     global baseline_avgs
+    global comp_value
     coords = motorUtils.getCoordString() # Get coords to use as key in baseline dict
     rssi_value = readRssi() # Read rssi value
     comp_value = rssi_value - baseline_avgs[coords] # Subtract baseline current rssi
@@ -141,7 +148,12 @@ def getRssiSubBaseline():
 
 # Compare current RSSI with baseline and decide if search mode should be activated
 def rfCompBaseline(): 
+    global comp_value
     comp_value = getRssiSubBaseline() # Get baseline subtracted rssi
-    if comp_value > rssi_threshold: # Enter search mode if above threshold
+    thresh_breached_cnt = 0
+    for i in range(threshold_confirm_iterations):  # Take 20 readings to confirm threshold breach
+        if comp_value > rssi_threshold: # If reading exceeds threshold
+            thresh_breached_cnt += 1    # Increment counter
+    if thresh_breached_cnt / threshold_confirm_iterations >= threshold_breach_percentage:  # If 70% readings exceed threshold
         print("Drone detected! Entering search mode.") 
         modes.searchMode()  # Enter search mode

@@ -97,23 +97,25 @@ def readRssi(num_samples: int = 250_000) -> float | None:
         _power_sum = 0.0
         _target = num_samples
     _done.clear()
+    for i in range(50):
+        _sdr.pyhackrf_start_rx()
+        ok = _done.wait(timeout=2.0)
+        try:
+            _sdr.pyhackrf_stop_rx()
+        except Exception:
+            pass
 
-    _sdr.pyhackrf_start_rx()
-    ok = _done.wait(timeout=2.0)
-    try:
-        _sdr.pyhackrf_stop_rx()
-    except Exception:
-        pass
-
-    if not ok:
-        return None
-
-    with _lock:
-        if _seen == 0 or _power_sum <= 0:
+        if not ok:
             return None
-        mean_power = _power_sum / _seen
 
-    rssi = 10.0 * math.log10(mean_power + 1e-12)
+        with _lock:
+            if _seen == 0 or _power_sum <= 0:
+                return None
+            mean_power = _power_sum / _seen
+
+        rssi = 10.0 * math.log10(mean_power + 1e-12)
+        if rssi != None:
+            break
     rssi_lst.append(rssi)
     rssi_lst.remove(rssi_lst[0])
     return rssi
@@ -144,8 +146,10 @@ def scanBaseline():
 def getRssiSubBaseline():
     global baseline_avgs
     global comp_value
+    print(baseline_avgs)
     coords = motorUtils.getCoordString() # Get coords to use as key in baseline dict
     rssi_value = readRssi() # Read rssi value
+    print(f"{rssi_value} - {baseline_avgs[coords]} ({coords})")
     comp_value = rssi_value - baseline_avgs[coords] # Subtract baseline current rssi
     return comp_value
     

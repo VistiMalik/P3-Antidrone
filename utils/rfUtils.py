@@ -19,7 +19,7 @@ rxStream = None
 # -----------------------------
 # Settings
 # -----------------------------
-sample_rate = 20e6
+sample_rate = 15e6
 baseband_filter = 7.5e6
 lna_gain = 30
 vga_gain = 50
@@ -84,7 +84,7 @@ def set_freq(freq_hz: float):
     _sdr.pyhackrf_set_freq(freq_hz)
     time.sleep(0.02)  
 
-def readRssi(num_samples: int = 20_000) -> float | None:
+def readRssi(num_samples: int = 250_000) -> float | None:
     """
     Returns RSSI as wideband power in dBFS.
     """

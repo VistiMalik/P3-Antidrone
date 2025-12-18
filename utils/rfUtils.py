@@ -84,7 +84,7 @@ def set_freq(freq_hz: float):
     _sdr.pyhackrf_set_freq(freq_hz)
     time.sleep(0.02)  
 
-def readRssi(num_samples: int = 50_000) -> float | None:
+def readRssi(num_samples: int = 20_000) -> float | None:
     """
     Returns RSSI as wideband power in dBFS.
     """

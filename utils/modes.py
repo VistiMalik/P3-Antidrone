@@ -23,6 +23,7 @@ def setupMode():
     global CURRENT_MODE
     CURRENT_MODE = 0
     rfUtils.setupHackRF()
+    time.sleep(0.5)
     rfUtils.set_freq(channels[0])
     for i in range(setup_sweep_count):  # Repeat the entire scanning process 3 times to get baseline noise levels
         rfUtils.scanBaseline()  # Initial scan at the top position

@@ -7,7 +7,7 @@ IP = "172.20.10.3"  # IP address of the Raspberry Pi
 rssi_threshold = 10  # RSSI threshold for drone detection (test value in dB)
 
 # Variable to confirm threshold breaches:
-threshold_confirm_iterations = 20  # Number of readings to check for threshold breach confirmation
+threshold_confirm_iterations = 5  # Number of readings to check for threshold breach confirmation
 threshold_breach_percentage = 0.7  # Percentage of readings that must exceed threshold to confirm breach
 go_small_mode_percentage = 0.85  # Percentage of readings that must exceed threshold to switch to small mode
 
@@ -38,6 +38,6 @@ DIR_V = 10
 latitude = 0.0  # Placeholder for latitude
 longitude = 0.0  # Placeholder for longitude
 
-setup_sweep_count = 3  # Number of setup sweeps to establish baseline
+setup_sweep_count = 1  # Number of setup sweeps to establish baseline
 
 channels = [2452]  # Frequencies in MHz to scan for drones

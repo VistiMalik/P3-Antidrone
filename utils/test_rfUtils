@@ -3,7 +3,7 @@ import numpy as np
 import math
 import SoapySDR
 # import utils.modes as modes
-from utils.config import *
+# from utils.config import *
 # import utils.motorUtils as motorUtils
 
 # --- GLOBAL VARIABLES ---
@@ -13,7 +13,7 @@ sdr = None   # Global SDR device holder
 rxStream = None # Global Stream holder
 
 # --- HACKRF SETUP (Run this ONCE at startup) ---
-def setupSDR(freq_mhz=channels[0]):
+def setupSDR(freq_mhz2=2445):
     global sdr, rxStream
     try:
         # 1. Connect to device

@@ -18,10 +18,10 @@ def setup():
     GPIO.setmode(GPIO.BCM)  # Set mode to BCM
 
     # Set pinmodes (input/output pin?)
-    GPIO.setup(PULL_H, GPIO.OUT)   
-    GPIO.setup(DIR_H, GPIO.OUT)  
-    GPIO.setup(PULL_V, GPIO.OUT)  
-    GPIO.setup(DIR_V, GPIO.OUT)  
+    GPIO.setup(PULL_H, GPIO.OUT, initial=GPIO.LOW)   
+    GPIO.setup(DIR_H, GPIO.OUT, initial=GPIO.LOW)  
+    GPIO.setup(PULL_V, GPIO.OUT, initial=GPIO.LOW)  
+    GPIO.setup(DIR_V, GPIO.OUT, initial=GPIO.LOW)  
 
 
 

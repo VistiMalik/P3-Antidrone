@@ -153,9 +153,9 @@ def getRssiSubBaseline():
 # Compare current RSSI with baseline and decide if search mode should be activated
 def rfCompBaseline(): 
     global comp_value
-    comp_value = getRssiSubBaseline() # Get baseline subtracted rssi
     thresh_breached_cnt = 0
     for i in range(threshold_confirm_iterations):  # Take 20 readings to confirm threshold breach
+        comp_value = getRssiSubBaseline() # Get baseline subtracted rssi
         if comp_value > rssi_threshold: # If reading exceeds threshold
             thresh_breached_cnt += 1    # Increment counter
     if thresh_breached_cnt / threshold_confirm_iterations >= threshold_breach_percentage:  # If 70% readings exceed threshold

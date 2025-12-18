@@ -35,6 +35,8 @@ async def main():
     except Exception as e:
        print(f"An unexpected error occurred: {e}")
     finally:
+        print("Stopping hackRF")
+        rfUtils.closeHackRF()
         print("Stopping turret operation.")
         stop_turret_event.set()
         if 'turret_thread' in locals() and turret_thread.is_alive():

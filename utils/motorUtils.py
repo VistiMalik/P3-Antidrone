@@ -100,6 +100,7 @@ def getCoordString():
     vert = round(coords["vertical"], 0)
     horz = round(coords["horizontal"], 0)
     coord_string = f"{vert}_{horz}"
+    print(coord_string)
     return coord_string
 
 def resetPosition():

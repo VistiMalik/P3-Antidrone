@@ -146,6 +146,7 @@ def getRssiSubBaseline():
     global comp_value
     coords = motorUtils.getCoordString() # Get coords to use as key in baseline dict
     rssi_value = readRssi() # Read rssi value
+    print(baseline_avgs)
     comp_value = rssi_value - baseline_avgs[coords] # Subtract baseline current rssi
     return comp_value
     

@@ -97,8 +97,8 @@ def getCoords():
 
 def getCoordString(): 
     coords = motorUtils.getCoords()
-    vert = round(coords["vertical"], 0) % 360
-    horz = round(coords["horizontal"], 0) % 360
+    vert = str(round(coords["vertical"], 0) % 360).split(".")[0]
+    horz = str(round(coords["horizontal"], 0) % 360).split(".")[0]
     coord_string = f"{vert}_{horz}"
     print()
     print(coord_string)

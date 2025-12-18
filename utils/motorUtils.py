@@ -97,10 +97,9 @@ def getCoords():
 
 def getCoordString():
     coords = motorUtils.getCoords()
-    vert = round(coords["vertical"], 0)
-    horz = round(coords["horizontal"], 0)
+    vert = round(coords["vertical"], 0) % 360
+    horz = round(coords["horizontal"], 0) % 360
     coord_string = f"{vert}_{horz}"
-    print(coord_string)
     return coord_string
 
 def resetPosition():

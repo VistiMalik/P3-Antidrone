@@ -62,12 +62,7 @@ def searchMode():
     vert_optimum_found_count = 0 # Count of consecutive vertical optimum readings found
     last_horz_move = -1 # Last horizontal movement direction -- 0 means right, 1 means left, -1 means no movement yet
     last_vert_move = -1 # Last vertical movement direction -- 0 means up, 1 means down, -1 means no movement yet
-
-    # If comming from jamming mode we start in small increments of 9 degs
-    if from_jamming:
-        movement_scale = 9
-    else:
-        movement_scale = 18
+    movement_scale = 18 # Initial movement scale for search mode
 
     # If there's been an above-threshold reading in the last 10 seconds, keep searching
     while (time.time() - OBJ_SPOTTED_TIME) < 10:

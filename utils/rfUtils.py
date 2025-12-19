@@ -152,6 +152,14 @@ def getRssiSubBaseline():
     print(f"{rssi_value} - {baseline_avgs[coords]} ({coords})")
     comp_value = rssi_value - baseline_avgs[coords] # Subtract baseline current rssi
     return comp_value
+
+# Get RSSI value subtracted by baseline average for current position
+def avgGetRssiSubBaseline(iterations):
+    rssi_list = []
+    for i in range(iterations):
+        rssi_lst.append(getRssiSubBaseline())
+    
+    return sum(rssi_list)/iterations
     
 
 # Compare current RSSI with baseline and decide if search mode should be activated

@@ -68,17 +68,17 @@ def searchMode(from_jamming=False):
     while (time.time() - OBJ_SPOTTED_TIME) < 10:
         for i in range(threshold_confirm_iterations):  # Perform 20 iterations of hill climbing
             # Hill climb step on left and right 
-            rssi_left = rfUtils.getRssiSubBaseline() # Read RSSI for left position
+            rssi_left = rfUtils.avgGetRssiSubBaseline(5) # Read RSSI for left position
             motorUtils.movHorizontal(movement_scale, speedSearch) # Move to the right
-            rssi_right = rfUtils.getRssiSubBaseline() # Read RSSI for right position
+            rssi_right = rfUtils.avgGetRssiSubBaseline(5) # Read RSSI for right position
             if rssi_left > rssi_right:  # Compare right and left RSSI values
                 motorUtils.movHorizontal(-movement_scale*2, speedSearch) # If left is stronger, move left twice, else just stay on new position
 
 
             # Hill climb step on up and down
-            rssi_down = rfUtils.getRssiSubBaseline() # Read RSSI for down position
+            rssi_down = rfUtils.avgGetRssiSubBaseline(5) # Read RSSI for down position
             motorUtils.movVertical(movement_scale, speedSearch) # Move up
-            rssi_up = rfUtils.getRssiSubBaseline() # Read RSSI for up position
+            rssi_up = rfUtils.avgGetRssiSubBaseline(5) # Read RSSI for up position
             if rssi_down > rssi_up: # Compare up and down RSSI values
                 motorUtils.movVertical(-movement_scale*2, speedSearch) # If up is down is stroinger, move down twice, else just stay on new position  
             

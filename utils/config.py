@@ -27,7 +27,8 @@ horz_start_pos = 0  # Starting horizontal position in degrees
 vert_min = 0  # Minimum vertical position in degrees
 vert_max = 90  # Maximum vertical position in degrees
 
-GEAR_RATIO = 3  # Gear ratio for vertical motor
+V_GEAR_RATIO = 3  # Gear ratio for vertical motor
+H_GEAR_RATIO = 4
 
 # GPIO pin assignments:
 PULL_H = 4

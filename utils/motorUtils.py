@@ -31,7 +31,7 @@ def movHorizontal(degrees, speed=0.001):
 
     steps_moved = 0
 
-    raw_steps = degrees / ANGLE_PER_MICROSTEP
+    raw_steps = degrees / ANGLE_PER_MICROSTEP * H_GEAR_RATIO # Adjust for gear ratio
     steps = abs(int(round(raw_steps, 0)))  # Convert degrees to steps (1 step = 1.8°) and remove sign
 
     # If move negative degrees turn on direction pin
@@ -49,7 +49,7 @@ def movHorizontal(degrees, speed=0.001):
         time.sleep(speed)
         steps_moved += 1
 
-        coords["horizontal"] += ANGLE_PER_MICROSTEP * direction
+        coords["horizontal"] += (ANGLE_PER_MICROSTEP / H_GEAR_RATIO) * direction
         coords["horizontal"] %= 360  
     direction = 1
     GPIO.output(DIR_H, GPIO.LOW) # Turn off/reset direction pin
@@ -66,7 +66,7 @@ def movVertical(degrees, speed=0.001):
         return
     else:
         steps_moved = 0
-        raw_steps = degrees / ANGLE_PER_MICROSTEP * GEAR_RATIO # Adjust for gear ratio
+        raw_steps = degrees / ANGLE_PER_MICROSTEP * V_GEAR_RATIO # Adjust for gear ratio
         steps = abs(int(round(raw_steps, 0)))  # Convert degrees to steps (1 step = 1.8°) and remove sign
 
         # If move negative degrees turn on direction pin
@@ -84,7 +84,7 @@ def movVertical(degrees, speed=0.001):
             time.sleep(speed)
             steps_moved += 1
                 
-            coords["vertical"] += (ANGLE_PER_MICROSTEP / GEAR_RATIO) * direction
+            coords["vertical"] += (ANGLE_PER_MICROSTEP / V_GEAR_RATIO) * direction
         direction = 1
             # coords["vertical"] %= 360  # It should not be necessary to wrap vertical position
         

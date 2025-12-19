@@ -23,7 +23,7 @@ async def broadcast():
     rssi = rfUtils.getRssi()
     base_diff = rfUtils.getCompValue()
     msg = json.dumps({
-        "horizontal_angle": round(h_angle, 1),
+        "horizontal_angle": -round(h_angle, 1),
         "vertical_angle": round(-90 + v_angle % 360, 1),
         "mode": mode,
         "color": color,

@@ -78,6 +78,7 @@ def searchMode(from_jamming=False):
             motorUtils.movHorizontal(movement_scale, speedSearch) # Move to the right
             
             rssi_right = rfUtils.avgGetRssiSubBaseline(5) # Read RSSI for right position
+            print(f"right: {rssi_right}, left: {rssi_left}")
             if rssi_left > rssi_right:  # Compare right and left RSSI values
                 print("Left is best")
                 motorUtils.movHorizontal(-movement_scale*2, speedSearch) # If left is stronger, move left twice, else just stay on new position
@@ -95,6 +96,7 @@ def searchMode(from_jamming=False):
             print("Moving up")
             motorUtils.movVertical(movement_scale, speedSearch) # Move up
             rssi_up = rfUtils.avgGetRssiSubBaseline(5) # Read RSSI for up position
+            print(f"right: {rssi_down}, left: {rssi_up}")
             if rssi_down > rssi_up: # Compare up and down RSSI values
                 print("Down is best")
                 motorUtils.movVertical(-movement_scale*2, speedSearch) # If up is down is stroinger, move down twice, else just stay on new position 

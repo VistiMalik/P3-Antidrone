@@ -83,7 +83,7 @@ def searchMode(from_jamming=False):
                 motorUtils.movVertical(-movement_scale*2, speedSearch) # If up is down is stroinger, move down twice, else just stay on new position  
             
             # If any of the readings exceed the threshold, increment the counter
-            if rssi_left > rssi_threshold or rssi_right > rssi_threshold or rssi_up > rssi_threshold or rssi_down > rssi_threshold:
+            if max(rssi_left, rssi_right, rssi_up, rssi_down) > rssi_threshold: #We only need to check if one reading exceeds the threshold, so we use max()
                 threshold_reached_count += 1
 
         if threshold_reached_count / threshold_confirm_iterations >= threshold_breach_percentage:

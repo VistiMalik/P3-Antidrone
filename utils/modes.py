@@ -52,7 +52,7 @@ def idleMode():
     time.sleep(1)  # Short delay between opposite movements
 
     
-def searchMode(from_jamming=False):
+def searchMode():
     global CURRENT_MODE
     global OBJ_SPOTTED_TIME
     CURRENT_MODE = 2
@@ -119,6 +119,7 @@ def searchMode(from_jamming=False):
         if horz_optimum_found_count / threshold_confirm_iterations >= optimum_confirmed_percentage and vert_optimum_found_count / threshold_confirm_iterations >= optimum_confirmed_percentage:
             if movement_scale == 9: # If in small mode
                 jammingMode() # Start jamming
+                CURRENT_MODE = 2 # Return to search mode after jamming
             else: 
                 movement_scale = 9 # Go to small mode
         threshold_reached_count = 0  # Reset counter for next iteration
@@ -139,4 +140,3 @@ def jammingMode():
     time.sleep(5)  # Simulate jamming duration
     print("Exiting jamming mode")
     time.sleep(1)  # Short delay before returning to other modes
-    searchMode(from_jamming=True)  # Return to search mode after jamming

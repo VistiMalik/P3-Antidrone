@@ -92,7 +92,7 @@ def searchMode(from_jamming=False):
         # Has there been 10 consecutive readings above the threshold then go to small mode if already in small mode start jamming
         if threshold_reached_count / threshold_confirm_iterations >= go_small_mode_percentage:
             if movement_scale == 9: # If in small mode
-                pass # jamming_mode() # Start jamming
+                jammingMode() # Start jamming
             else: 
                 movement_scale = 9 # Go to small mode
         threshold_reached_count = 0  # Reset counter for next iteration
@@ -103,3 +103,12 @@ def searchMode(from_jamming=False):
 
     motorUtils.resetPosition() # Return to the top-position after end of search
     time.sleep(1)  # Short delay between opposite movements
+
+def jammingMode():
+    global CURRENT_MODE
+    CURRENT_MODE = 3
+    print("Entering jamming mode")
+    time.sleep(5)  # Simulate jamming duration
+    print("Exiting jamming mode")
+    time.sleep(1)  # Short delay before returning to other modes
+    searchMode(from_jamming=True)  # Return to search mode after jamming

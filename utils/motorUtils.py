@@ -36,10 +36,10 @@ def movHorizontal(degrees, speed=0.001):
 
     # If move negative degrees turn on direction pin
     if degrees < 0: 
-        direction = -1
+        direction = 1
         GPIO.output(DIR_H, GPIO.HIGH)
     else:
-        direction = 1
+        direction = -1
 
     # Turn on and off pull pin step times, such it moves the steps
     for i in range(steps):

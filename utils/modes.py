@@ -57,6 +57,10 @@ def searchMode(from_jamming=False):
     CURRENT_MODE = 2
     OBJ_SPOTTED_TIME = time.time()
     threshold_reached_count = 0 # Count of consecutive RSSI readings above threshold
+    horz_optimum_found_count = 0 # Count of consecutive horizontal optimum readings found
+    vert_optimum_found_count = 0 # Count of consecutive vertical optimum readings found
+    last_horz_move = -1 # Last horizontal movement direction -- 0 means right, 1 means left, -1 means no movement yet
+    last_vert_move = -1 # Last vertical movement direction -- 0 means up, 1 means down, -1 means no movement yet
 
     # If comming from jamming mode we start in small increments of 9 degs
     if from_jamming:
@@ -66,13 +70,20 @@ def searchMode(from_jamming=False):
 
     # If there's been an above-threshold reading in the last 10 seconds, keep searching
     while (time.time() - OBJ_SPOTTED_TIME) < 10:
-        for i in range(threshold_confirm_iterations):  # Perform 20 iterations of hill climbing
+        for i in range(threshold_confirm_iterations):  # Perform 5 iterations of hill climbing
             # Hill climb step on left and right 
             rssi_left = rfUtils.avgGetRssiSubBaseline(5) # Read RSSI for left position
             motorUtils.movHorizontal(movement_scale, speedSearch) # Move to the right
             rssi_right = rfUtils.avgGetRssiSubBaseline(5) # Read RSSI for right position
             if rssi_left > rssi_right:  # Compare right and left RSSI values
                 motorUtils.movHorizontal(-movement_scale*2, speedSearch) # If left is stronger, move left twice, else just stay on new position
+                if last_horz_move == 0:  # If last move was to the right
+                    horz_optimum_found_count += 1  # Increment optimum counter
+                last_horz_move = 1  # Set last horizontal move to left
+            else:
+                if last_horz_move == 1:  # If last move was to the left
+                    horz_optimum_found_count += 1  # Increment optimum counter
+                last_horz_move = 0  # Set last horizontal move to right
 
 
             # Hill climb step on up and down
@@ -80,7 +91,14 @@ def searchMode(from_jamming=False):
             motorUtils.movVertical(movement_scale, speedSearch) # Move up
             rssi_up = rfUtils.avgGetRssiSubBaseline(5) # Read RSSI for up position
             if rssi_down > rssi_up: # Compare up and down RSSI values
-                motorUtils.movVertical(-movement_scale*2, speedSearch) # If up is down is stroinger, move down twice, else just stay on new position  
+                motorUtils.movVertical(-movement_scale*2, speedSearch) # If up is down is stroinger, move down twice, else just stay on new position 
+                if last_vert_move == 0:  # If last move was up
+                    vert_optimum_found_count += 1  # Increment optimum counter
+                last_vert_move = 1  # Set last vertical move to down
+            else:
+                if last_vert_move == 1:  # If last move was down
+                    vert_optimum_found_count += 1  # Increment optimum counter
+                last_vert_move = 0  # Set last vertical move to up 
             
             # If any of the readings exceed the threshold, increment the counter
             if max(rssi_left, rssi_right, rssi_up, rssi_down) > rssi_threshold: #We only need to check if one reading exceeds the threshold, so we use max()
@@ -90,12 +108,14 @@ def searchMode(from_jamming=False):
             OBJ_SPOTTED_TIME = time.time()  # Update last spotted time
 
         # Has there been 10 consecutive readings above the threshold then go to small mode if already in small mode start jamming
-        if threshold_reached_count / threshold_confirm_iterations >= go_small_mode_percentage:
+        if horz_optimum_found_count / threshold_confirm_iterations >= optimum_confirmed_percentage and vert_optimum_found_count / threshold_confirm_iterations >= optimum_confirmed_percentage:
             if movement_scale == 9: # If in small mode
                 jammingMode() # Start jamming
             else: 
                 movement_scale = 9 # Go to small mode
         threshold_reached_count = 0  # Reset counter for next iteration
+        horz_optimum_found_count = 0  # Reset counter for next iteration
+        vert_optimum_found_count = 0  # Reset counter for next iteration
 
         # Has 5 seconds passed since object was last spotted go back to normal search mode
         if (time.time() - OBJ_SPOTTED_TIME) > 5:

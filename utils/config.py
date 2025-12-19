@@ -9,13 +9,13 @@ rssi_threshold = 10  # RSSI threshold for drone detection (test value in dB)
 # Variable to confirm threshold breaches:
 threshold_confirm_iterations = 5  # Number of readings to check for threshold breach confirmation
 threshold_breach_percentage = 0.7  # Percentage of readings that must exceed threshold to confirm breach
-go_small_mode_percentage = 0.85  # Percentage of readings that must exceed threshold to switch to small mode
+optimum_confirmed_percentage = 0.8  # Percentage of readings that must confirm optimum position
 
 
 # Movement speed settings:
-speedSetup = 0.00008  # Move speed during setup phase
-speedIdle = 0.00004  # Move speed during idle state
-speedSearch = 0.00002  # Move speed during search operations
+speedSetup = 0.0002  # Move speed during setup phase
+speedIdle = 0.0001  # Move speed during idle state
+speedSearch = 0.00005  # Move speed during search operations
 
 # Scan time:
 scanTime = 0.05  # Time duration for scanning in seconds (Halts movement during scan)
@@ -28,7 +28,7 @@ vert_min = 0  # Minimum vertical position in degrees
 vert_max = 90  # Maximum vertical position in degrees
 
 V_GEAR_RATIO = 3  # Gear ratio for vertical motor
-H_GEAR_RATIO = 4
+H_GEAR_RATIO = 4  # Gear ratio for horizontal motor
 
 # GPIO pin assignments:
 PULL_H = 4

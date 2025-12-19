@@ -166,7 +166,7 @@ def avgGetRssiSubBaseline(iterations):
 def rfCompBaseline(): 
     global comp_value
     thresh_breached_cnt = 0
-    for i in range(threshold_confirm_iterations):  # Take 20 readings to confirm threshold breach
+    for i in range(threshold_confirm_iterations):  # Take 5 readings to confirm threshold breach
         comp_value = getRssiSubBaseline() # Get baseline subtracted rssi
         if comp_value > rssi_threshold: # If reading exceeds threshold
             thresh_breached_cnt += 1    # Increment counter

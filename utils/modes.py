@@ -73,9 +73,12 @@ def searchMode(from_jamming=False):
         for i in range(threshold_confirm_iterations):  # Perform 5 iterations of hill climbing
             # Hill climb step on left and right 
             rssi_left = rfUtils.avgGetRssiSubBaseline(5) # Read RSSI for left position
+            print("Moving right")
             motorUtils.movHorizontal(movement_scale, speedSearch) # Move to the right
+            
             rssi_right = rfUtils.avgGetRssiSubBaseline(5) # Read RSSI for right position
             if rssi_left > rssi_right:  # Compare right and left RSSI values
+                print("Left is best")
                 motorUtils.movHorizontal(-movement_scale*2, speedSearch) # If left is stronger, move left twice, else just stay on new position
                 if last_horz_move == 0:  # If last move was to the right
                     horz_optimum_found_count += 1  # Increment optimum counter
@@ -88,9 +91,11 @@ def searchMode(from_jamming=False):
 
             # Hill climb step on up and down
             rssi_down = rfUtils.avgGetRssiSubBaseline(5) # Read RSSI for down position
+            print("Moving up")
             motorUtils.movVertical(movement_scale, speedSearch) # Move up
             rssi_up = rfUtils.avgGetRssiSubBaseline(5) # Read RSSI for up position
             if rssi_down > rssi_up: # Compare up and down RSSI values
+                print("Down is best")
                 motorUtils.movVertical(-movement_scale*2, speedSearch) # If up is down is stroinger, move down twice, else just stay on new position 
                 if last_vert_move == 0:  # If last move was up
                     vert_optimum_found_count += 1  # Increment optimum counter

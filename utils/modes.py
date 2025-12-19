@@ -23,16 +23,16 @@ def setupMode():
     time.sleep(0.5)
     rfUtils.set_freq(channels[0]*1e6)
     rfUtils.scanBaseline()
-    #for i in range(setup_sweep_count):  # Repeat the entire scanning process 3 times to get baseline noise levels
-    #    rfUtils.scanBaseline()  # Initial scan at the top position
-    #    for row in range(90//9):
-    #        motorUtils.movVertical(9, speedSetup) # Move down by 9 degrees
-    #        for col in range(360//9):
-    #            rfUtils.scanBaseline()
-    #            motorUtils.movHorizontal(9, speedSetup) # Move right by 9 degrees
+    for i in range(setup_sweep_count):  # Repeat the entire scanning process 2 times to get baseline noise levels
+       rfUtils.scanBaseline()  # Initial scan at the top position
+       for row in range(90//9):
+           motorUtils.movVertical(9, speedSetup) # Move down by 9 degrees
+           for col in range(360//9):
+               rfUtils.scanBaseline()
+               motorUtils.movHorizontal(9, speedSetup) # Move right by 9 degrees
 
-    #    motorUtils.resetPosition() # Return to the top-position after each full scan
-    #    time.sleep(1)  # Short delay between opposite movements
+       motorUtils.resetPosition() # Return to the top-position after each full scan
+       time.sleep(1)  # Short delay between opposite movements
 
 
 # Idle mode routine for the drone

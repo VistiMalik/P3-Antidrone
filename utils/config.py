@@ -39,6 +39,6 @@ DIR_V = 10
 latitude = 0.0  # Placeholder for latitude
 longitude = 0.0  # Placeholder for longitude
 
-setup_sweep_count = 1  # Number of setup sweeps to establish baseline
+setup_sweep_count = 2  # Number of setup sweeps to establish baseline
 
 channels = [2452]  # Frequencies in MHz to scan for drones

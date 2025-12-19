@@ -37,7 +37,7 @@ def movHorizontal(degrees, speed=0.001):
     # If move negative degrees turn on direction pin
     if degrees < 0: 
         direction = -1
-        GPIO.output(DIR_H, GPIO.LOW)
+        GPIO.output(DIR_H, GPIO.HIGH)
     else:
         direction = 1
 
@@ -52,7 +52,7 @@ def movHorizontal(degrees, speed=0.001):
         coords["horizontal"] += (ANGLE_PER_MICROSTEP / H_GEAR_RATIO) * direction
         coords["horizontal"] %= 360  
     direction = 1
-    GPIO.output(DIR_H, GPIO.HIGH) # Turn off/reset direction pin
+    GPIO.output(DIR_H, GPIO.LOW) # Turn off/reset direction pin
 
 # Move stepper motor 2 (Vertical)
 def movVertical(degrees, speed=0.001):

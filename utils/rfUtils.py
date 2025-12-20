@@ -163,13 +163,12 @@ def avgGetRssiSubBaseline(iterations):
 def rfCompBaseline(): 
     global comp_value
     thresh_breached_cnt = 0
-    for i in range(threshold_confirm_iterations):  # Take 5 readings to confirm threshold breach
+    for i in range(threshold_confirm_iterations):  # Take x readings to confirm threshold breach
         comp_value = getRssiSubBaseline() # Get baseline subtracted rssi
         if comp_value > rssi_threshold: # If reading exceeds threshold
             thresh_breached_cnt += 1    # Increment counter
-    if thresh_breached_cnt / threshold_confirm_iterations >= threshold_breach_percentage:  # If 70% readings exceed threshold
+    if thresh_breached_cnt / threshold_confirm_iterations >= threshold_breach_percentage:  # If x% readings exceed threshold
         print("Drone detected! Entering search mode.") 
         modes.searchMode()  # Enter search mode
-        modes.CURRENT_MODE = 1 # Set current mode back to idle mode after search mode is done
         return True
     return False

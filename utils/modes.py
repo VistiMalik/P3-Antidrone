@@ -40,12 +40,17 @@ def setupMode():
 def idleMode():
     global CURRENT_MODE
     CURRENT_MODE = 1
+    from_search_mode = False
 
-    rfUtils.rfCompBaseline()
+    from_search_mode = rfUtils.rfCompBaseline()
+    if from_search_mode:
+        return
     for row in range(90//18):
         motorUtils.movVertical(18, speedIdle) # Move down by 18 degrees
         for col in range(360//18):
-            rfUtils.rfCompBaseline()  # Scan at current position
+            from_search_mode = rfUtils.rfCompBaseline()  # Scan at current position
+            if from_search_mode:
+                return
             motorUtils.movHorizontal(18, speedIdle) # Move right by 18 degrees
     
     motorUtils.resetPosition() # Return to the top-position after each full scan

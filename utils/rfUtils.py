@@ -171,3 +171,5 @@ def rfCompBaseline():
         print("Drone detected! Entering search mode.") 
         modes.searchMode()  # Enter search mode
         modes.CURRENT_MODE = 1 # Set current mode back to idle mode after search mode is done
+        return True
+    return False

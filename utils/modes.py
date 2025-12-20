@@ -22,7 +22,6 @@ def setupMode():
     rfUtils.setupHackRF()
     time.sleep(0.5)
     rfUtils.set_freq(channels[0]*1e6)
-    rfUtils.scanBaseline()
     for i in range(setup_sweep_count):  # Repeat the entire scanning process 2 times to get baseline noise levels
        rfUtils.scanBaseline()  # Initial scan at the top position
        for row in range(90//9):
